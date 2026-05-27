@@ -1,0 +1,9 @@
+<div class="render-mode-badge">
+    <strong>rendering on:</strong>
+    <span>@RendererInfo.Name</span>
+    @if (AssignedRenderMode is not null)
+    {
+        <span>· assigned: @AssignedRenderMode</span>
+    }
+    <span>· @(RendererInfo.IsInteractive ? "interactive" : "static")</span>
+</div>

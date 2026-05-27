@@ -1,0 +1,38 @@
+@inject ILlmService LlmService
+@inject IJSRuntime JS
+
+<section class="leaderboard">
+    <h2>LLM Capability Matrix</h2>
+
+    @if (Llms is null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <ul class="leaderboard-list">
+            @foreach (var llm in Llms)
+            {
+                <LeaderboardRow Llm="llm" OnUpvote="HandleUpvote" />
+            }
+        </ul>
+    }
+</section>
+
+@code {
+    [PersistentState]
+    public List<Llm>? Llms { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Llms ??= await LlmService.GetLeaderboardAsync();
+    }
+
+    private async Task HandleUpvote(Llm llm)
+    {
+        var newCount = await LlmService.UpvoteAsync(llm.Id);
+        llm.Votes = newCount;
+        Llms = Llms?.OrderByDescending(l => l.Votes).ToList();
+        await JS.InvokeVoidAsync("console.log", $"Upvoted {llm.Name} (now at {newCount})");
+    }
+}

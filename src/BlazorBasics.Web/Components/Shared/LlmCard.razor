@@ -1,0 +1,14 @@
+<div class="llm-card">
+    <header class="llm-card-header">@Title</header>
+    <div class="llm-card-body">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

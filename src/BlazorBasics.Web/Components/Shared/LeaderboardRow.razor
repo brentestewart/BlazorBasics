@@ -1,0 +1,24 @@
+<li class="leaderboard-row">
+    <div class="llm-info">
+        <strong class="llm-name">@Llm.Name</strong>
+        <span class="llm-tagline">@Llm.Tagline</span>
+    </div>
+    <div class="llm-votes">
+        @if (Llm.Votes >= 10)
+        {
+            <span class="star" title="hot streak">★</span>
+        }
+        <span class="vote-count">@Llm.Votes</span>
+        <button type="button" class="upvote-btn" @onclick="HandleUpvote">▲</button>
+    </div>
+</li>
+
+@code {
+    [Parameter, EditorRequired]
+    public required Llm Llm { get; set; }
+
+    [Parameter]
+    public EventCallback<Llm> OnUpvote { get; set; }
+
+    private Task HandleUpvote() => OnUpvote.InvokeAsync(Llm);
+}

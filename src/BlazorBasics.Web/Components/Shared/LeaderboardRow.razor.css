@@ -1,0 +1,52 @@
+.leaderboard-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.4rem;
+    margin-bottom: 0.4rem;
+    background: #fff;
+}
+
+.llm-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.llm-name {
+    font-size: 1.05rem;
+}
+
+.llm-tagline {
+    color: #777;
+    font-size: 0.85rem;
+}
+
+.llm-votes {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.star {
+    color: #f5b400;
+}
+
+.vote-count {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    min-width: 2.5rem;
+    text-align: right;
+}
+
+.upvote-btn {
+    border: 1px solid #ccc;
+    background: #fafafa;
+    border-radius: 0.3rem;
+    padding: 0.2rem 0.6rem;
+    cursor: pointer;
+}
+
+.upvote-btn:hover {
+    background: #efefef;
+}
