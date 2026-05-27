@@ -3,7 +3,7 @@
     <span>@RendererInfo.Name</span>
     @if (AssignedRenderMode is not null)
     {
-        <span>· assigned: @AssignedRenderMode</span>
+        <span>· assigned: @AssignedRenderMode.GetType().Name</span>
     }
     <span>· @(RendererInfo.IsInteractive ? "interactive" : "static")</span>
 </div>

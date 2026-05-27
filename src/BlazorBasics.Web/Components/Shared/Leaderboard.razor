@@ -20,12 +20,11 @@
 </section>
 
 @code {
-    [PersistentState]
     public List<Llm>? Llms { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Llms ??= await LlmService.GetLeaderboardAsync();
+        Llms = await LlmService.GetLeaderboardAsync();
     }
 
     private async Task HandleUpvote(Llm llm)
