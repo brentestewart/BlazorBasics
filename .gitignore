@@ -1,0 +1,21 @@
+# .NET / Visual Studio
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# IDE / editor
+.idea/
+*.swp
+
+# OS
+.DS_Store
+
+# Node (Blazor tooling sometimes pulls these)
+node_modules/
+
+# Build / publish output
+publish/
+TestResults/
+*.log
