@@ -7,13 +7,13 @@
     display: inline-block;
     margin: 0.75rem 0 1rem 0;
     padding: 0.4rem 0.75rem;
-    background: #eef4ff;
-    border: 1px solid #c5d6f5;
+    background: #fff4ee;
+    border: 1px solid #f5d6c5;
     border-radius: 0.3rem;
-    color: #1f4ea0;
+    color: #a04a1f;
     text-decoration: none;
 }
 
 .toggle-link:hover {
-    background: #dde9ff;
+    background: #ffe3d2;
 }

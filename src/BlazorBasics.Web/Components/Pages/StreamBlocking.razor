@@ -1,0 +1,20 @@
+@page "/stream-blocking"
+
+<PageTitle>Stream rendering (blocking)</PageTitle>
+
+<section class="stream-demo">
+    <h1>Without <code>[StreamRendering]</code></h1>
+    <p>
+        Same component as the streamed page, no attribute. The server waits
+        for the whole <code>OnInitializedAsync</code> to finish before sending
+        any HTML &mdash; expect a blank tab for ~3 seconds, then everything appears at once.
+    </p>
+
+    <a class="toggle-link" href="/stream">
+        → see the same component <strong>with</strong> [StreamRendering]
+    </a>
+
+    <StreamSections />
+</section>
+
+<RenderModeBadge />

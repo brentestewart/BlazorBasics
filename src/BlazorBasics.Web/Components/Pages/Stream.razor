@@ -1,56 +1,21 @@
 @page "/stream"
 @attribute [StreamRendering]
 
-<PageTitle>Stream rendering</PageTitle>
+<PageTitle>Stream rendering (streamed)</PageTitle>
 
 <section class="stream-demo">
-    <h1>Stream rendering</h1>
+    <h1>With <code>[StreamRendering]</code></h1>
     <p>
-        Each section below performs an artificial 1&nbsp;second of "work" before it has content.
-        With <code>[StreamRendering]</code> the server keeps the HTTP response open and pushes
-        each section out as it becomes ready &mdash; you should see them pop in one at a time.
-        Remove the attribute and the server holds everything back until all three are done.
+        The server flushes chunks as each section's <code>await</code> resolves.
+        You should see the three placeholders appear immediately,
+        then each section fill in one second at a time.
     </p>
 
-    <article class="stream-section">
-        <h2>Section A</h2>
-        @if (sectionA is null) { <p class="placeholder">waiting...</p> }
-        else { <p class="loaded">@sectionA</p> }
-    </article>
+    <a class="toggle-link" href="/stream-blocking">
+        → see the same component <strong>without</strong> [StreamRendering]
+    </a>
 
-    <article class="stream-section">
-        <h2>Section B</h2>
-        @if (sectionB is null) { <p class="placeholder">waiting...</p> }
-        else { <p class="loaded">@sectionB</p> }
-    </article>
-
-    <article class="stream-section">
-        <h2>Section C</h2>
-        @if (sectionC is null) { <p class="placeholder">waiting...</p> }
-        else { <p class="loaded">@sectionC</p> }
-    </article>
+    <StreamSections />
 </section>
 
 <RenderModeBadge />
-
-@code {
-    private string? sectionA;
-    private string? sectionB;
-    private string? sectionC;
-
-    protected override async Task OnInitializedAsync()
-    {
-        var start = DateTime.Now;
-
-        await Task.Delay(1000);
-        sectionA = $"Loaded at +{(DateTime.Now - start).TotalSeconds:F2}s";
-        StateHasChanged();
-
-        await Task.Delay(1000);
-        sectionB = $"Loaded at +{(DateTime.Now - start).TotalSeconds:F2}s";
-        StateHasChanged();
-
-        await Task.Delay(1000);
-        sectionC = $"Loaded at +{(DateTime.Now - start).TotalSeconds:F2}s";
-    }
-}
