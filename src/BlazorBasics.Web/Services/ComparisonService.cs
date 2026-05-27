@@ -29,6 +29,10 @@ public class ComparisonService : IComparisonService
     {
         lock (_lock)
         {
+            // The form binder leaves Responses null when the form has no fields for it;
+            // normalize so downstream rendering can assume the collection exists.
+            comparison.Responses ??= new();
+            comparison.Submitter ??= new();
             comparison.Id = _nextId++;
             _comparisons.Add(comparison);
             return Task.FromResult(comparison);

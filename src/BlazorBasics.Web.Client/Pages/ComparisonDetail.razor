@@ -17,7 +17,7 @@
             Submitted by <strong>@Comparison.Submitter.Name</strong>
         </p>
 
-        @if (Comparison.Responses.Count == 0)
+        @if (Comparison.Responses is null or { Count: 0 })
         {
             <p><em>No responses yet.</em></p>
         }
