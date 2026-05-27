@@ -1,21 +1,35 @@
-<div class="render-mode-badge">
+<div class="rm-banner">
     @if (AssignedRenderMode is null)
     {
-        <strong>rendering on:</strong>
-        <span class="step current">Static</span>
+        <div class="rm-prefix">Render mode</div>
+        <div class="rm-steps">
+            <div class="rm-step current mode-static">
+                <div class="rm-name">Static</div>
+                <div class="rm-sub">never interactive</div>
+            </div>
+        </div>
     }
     else
     {
-        <strong>render path:</strong>
-        @for (var i = 0; i < Path.Count; i++)
-        {
-            @if (i > 0)
+        <div class="rm-prefix">Render path</div>
+        <div class="rm-steps">
+            @for (var i = 0; i < Path.Count; i++)
             {
-                <span class="arrow">→</span>
+                var step = Path[i];
+                var isCurrent = i == Path.Count - 1;
+                @if (i > 0)
+                {
+                    <div class="rm-arrow">→</div>
+                }
+                <div class="rm-step @(isCurrent ? "current" : "prior") mode-@(step.ToLowerInvariant())">
+                    <div class="rm-name">@step</div>
+                </div>
             }
-            <span class="step @(i == Path.Count - 1 ? "current" : "prior")">@Path[i]</span>
-        }
-        <span class="meta">· assigned: @AssignedRenderMode.GetType().Name</span>
+        </div>
+        <div class="rm-suffix">
+            <span class="rm-suffix-label">assigned</span>
+            <span class="rm-suffix-value">@AssignedRenderMode.GetType().Name.Replace("RenderMode", "")</span>
+        </div>
     }
 </div>
 
@@ -24,9 +38,6 @@
 
     protected override void OnInitialized()
     {
-        // Every interactive page passes through a server-side static prerender first,
-        // so seed the path with that step. On the interactive instance this runs again
-        // but starts with an empty list, so we re-add it.
         if (AssignedRenderMode is not null)
         {
             Path.Add("Static");
