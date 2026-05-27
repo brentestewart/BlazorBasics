@@ -13,7 +13,6 @@ builder.Services.AddRazorComponents()
 builder.Services.AddValidation();
 builder.Services.AddClientValidation();
 
-builder.Services.AddSingleton<ILlmService, LlmService>();
 builder.Services.AddSingleton<IComparisonService, ComparisonService>();
 
 var app = builder.Build();
@@ -33,8 +32,6 @@ app.UseHttpsRedirection();
 app.UseAntiforgery();
 app.MapStaticAssets();
 
-app.MapGet("/api/llms", (ILlmService svc) => svc.GetLeaderboardAsync());
-app.MapPost("/api/llms/{id:int}/upvote", (int id, ILlmService svc) => svc.UpvoteAsync(id));
 app.MapGet("/api/comparisons", (IComparisonService svc) => svc.ListAsync());
 app.MapGet("/api/comparisons/{id:int}", async (int id, IComparisonService svc) =>
 {
