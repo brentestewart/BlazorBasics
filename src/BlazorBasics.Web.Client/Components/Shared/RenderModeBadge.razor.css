@@ -10,8 +10,34 @@
     font-size: 0.85rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     z-index: 1000;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+    max-width: calc(100vw - 1.5rem);
 }
 
-.render-mode-badge span {
-    margin-left: 0.35rem;
+.step {
+    padding: 0.1rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.step.prior {
+    background: #2f2f2f;
+    color: #aaa;
+}
+
+.step.current {
+    background: #2d6cdf;
+    color: #fff;
+    font-weight: 600;
+}
+
+.arrow {
+    color: #777;
+}
+
+.meta {
+    color: #888;
+    margin-left: 0.25rem;
 }

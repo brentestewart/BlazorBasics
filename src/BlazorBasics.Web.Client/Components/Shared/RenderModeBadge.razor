@@ -1,9 +1,46 @@
 <div class="render-mode-badge">
-    <strong>rendering on:</strong>
-    <span>@RendererInfo.Name</span>
-    @if (AssignedRenderMode is not null)
+    @if (AssignedRenderMode is null)
     {
-        <span>· assigned: @AssignedRenderMode.GetType().Name</span>
+        <strong>rendering on:</strong>
+        <span class="step current">Static</span>
     }
-    <span>· @(RendererInfo.IsInteractive ? "interactive" : "static")</span>
+    else
+    {
+        <strong>render path:</strong>
+        @for (var i = 0; i < Path.Count; i++)
+        {
+            @if (i > 0)
+            {
+                <span class="arrow">→</span>
+            }
+            <span class="step @(i == Path.Count - 1 ? "current" : "prior")">@Path[i]</span>
+        }
+        <span class="meta">· assigned: @AssignedRenderMode.GetType().Name</span>
+    }
 </div>
+
+@code {
+    private List<string> Path { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        // Every interactive page passes through a server-side static prerender first,
+        // so seed the path with that step. On the interactive instance this runs again
+        // but starts with an empty list, so we re-add it.
+        if (AssignedRenderMode is not null)
+        {
+            Path.Add("Static");
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (AssignedRenderMode is null) return;
+        var current = RendererInfo.Name;
+        if (Path[^1] != current)
+        {
+            Path.Add(current);
+            StateHasChanged();
+        }
+    }
+}
