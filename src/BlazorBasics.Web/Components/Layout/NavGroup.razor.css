@@ -1,0 +1,40 @@
+.nav-group {
+    margin: 0;
+}
+
+.nav-group-header {
+    list-style: none;
+    cursor: pointer;
+    padding: 0.3rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #aaa;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    user-select: none;
+    line-height: 1.4;
+}
+
+.nav-group-header::-webkit-details-marker {
+    display: none;
+}
+
+.nav-group-header::before {
+    content: "▸";
+    display: inline-block;
+    width: 0.9rem;
+    color: #777;
+    font-size: 0.75rem;
+}
+
+.nav-group[open] > .nav-group-header::before {
+    content: "▾";
+}
+
+.nav-group-header:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.nav-group-body {
+    padding: 0.15rem 0;
+}

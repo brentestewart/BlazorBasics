@@ -18,6 +18,30 @@
     <Routes />
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
+    <script>
+        (function () {
+            function applyNavStepState() {
+                document.querySelectorAll('details[data-step]').forEach(d => {
+                    const key = 'nav-step-' + d.dataset.step;
+                    const stored = localStorage.getItem(key);
+                    if (stored === 'open') d.open = true;
+                    else if (stored === 'closed') d.open = false;
+                    if (!d.dataset.persisted) {
+                        d.dataset.persisted = '1';
+                        d.addEventListener('toggle', () => {
+                            localStorage.setItem('nav-step-' + d.dataset.step, d.open ? 'open' : 'closed');
+                        });
+                    }
+                });
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', applyNavStepState);
+            } else {
+                applyNavStepState();
+            }
+            document.addEventListener('enhancedload', applyNavStepState);
+        })();
+    </script>
 </body>
 
 </html>

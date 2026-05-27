@@ -1,4 +1,6 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+@inject NavigationManager Nav
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Component Lab</a>
     </div>
@@ -7,33 +9,43 @@
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="static">Static SSR</NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="server">Server</NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="wasm">WebAssembly</NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="auto">Auto</NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="submit">Submit</NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="stream">Stream (streamed)</NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="stream-blocking">Stream (blocking)</NavLink>
-        </div>
-    </nav>
+    <NavGroup StepNumber="1" IsOpen="@IsCurrent(Step1Paths)">
+        <NavLink class="nav-link" href="static">Static SSR</NavLink>
+        <NavLink class="nav-link" href="server">Server</NavLink>
+        <NavLink class="nav-link" href="wasm">WebAssembly</NavLink>
+        <NavLink class="nav-link" href="auto">Auto</NavLink>
+    </NavGroup>
+
+    <NavGroup StepNumber="2" IsOpen="@IsCurrent(Step2Paths)">
+        <span class="nav-link nav-link-placeholder">(coming: binding, events, lifecycle, DI)</span>
+    </NavGroup>
+
+    <NavGroup StepNumber="3" IsOpen="@IsCurrent(Step3Paths)">
+        <NavLink class="nav-link" href="stream">Stream (streamed)</NavLink>
+        <NavLink class="nav-link" href="stream-blocking">Stream (blocking)</NavLink>
+        <NavLink class="nav-link" href="submit">Submit form</NavLink>
+    </NavGroup>
+
+    <NavGroup StepNumber="4" IsOpen="@IsCurrent(Step4Paths)">
+        <span class="nav-link nav-link-placeholder">(coming: persistent state, cascading values)</span>
+    </NavGroup>
+
+    <NavGroup StepNumber="5" IsOpen="@IsCurrent(Step5Paths)">
+        <span class="nav-link nav-link-placeholder">(coming: JS interop)</span>
+    </NavGroup>
 </div>
 
+@code {
+    private static readonly string[] Step1Paths = ["static", "server", "wasm", "auto"];
+    private static readonly string[] Step2Paths = ["binding", "events", "lifecycle", "di"];
+    private static readonly string[] Step3Paths = ["stream", "stream-blocking", "submit", "comparison"];
+    private static readonly string[] Step4Paths = ["persistent", "cascading"];
+    private static readonly string[] Step5Paths = ["js-interop"];
+
+    private bool IsCurrent(string[] paths)
+    {
+        var relative = Nav.ToBaseRelativePath(Nav.Uri).ToLowerInvariant();
+        if (string.IsNullOrEmpty(relative)) return false;
+        return paths.Any(p => relative == p || relative.StartsWith(p + "/"));
+    }
+}

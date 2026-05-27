@@ -1,0 +1,17 @@
+<details class="nav-group" data-step="@StepNumber" open="@IsOpen">
+    <summary class="nav-group-header">Step @StepNumber</summary>
+    <div class="nav-group-body">
+        @ChildContent
+    </div>
+</details>
+
+@code {
+    [Parameter, EditorRequired]
+    public int StepNumber { get; set; }
+
+    [Parameter]
+    public bool IsOpen { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}
