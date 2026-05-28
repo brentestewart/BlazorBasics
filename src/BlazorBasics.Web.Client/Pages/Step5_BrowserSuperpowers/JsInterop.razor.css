@@ -1,0 +1,61 @@
+.js-page {
+    max-width: 40rem;
+    margin: 1.5rem 0;
+}
+
+.interop-row {
+    max-width: 520px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    background: #dbeafe;
+    color: #1f2937;
+    border-radius: 8px;
+}
+
+.interop-row h2 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    color: #1e40af;
+}
+
+.interop-row p {
+    margin: 0.4rem 0 0;
+}
+
+.interop-row .hint {
+    font-size: 0.85rem;
+    color: #475569;
+    margin-top: 0;
+}
+
+.interop-row input {
+    padding: 0.3rem 0.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 1px solid #94a3b8;
+    background: #ffffff;
+    color: #1f2937;
+    margin-right: 0.4rem;
+}
+
+.interop-row button {
+    padding: 0.3rem 0.9rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 1px solid #94a3b8;
+    background: #ffffff;
+    color: #1f2937;
+    cursor: pointer;
+}
+
+.status {
+    font-size: 0.85rem;
+    color: #1e40af;
+}
+
+.dimensions {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e40af;
+}

@@ -1,0 +1,77 @@
+@page "/js-interop"
+@rendermode InteractiveWebAssembly
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<PageTitle>JS interop</PageTitle>
+
+<section class="js-page">
+    <h1>JS interop — both directions</h1>
+
+    <div class="interop-row">
+        <h2>1. C# → JS — copy to clipboard</h2>
+        <p class="hint">The button calls a JS function via <code>IJSObjectReference.InvokeVoidAsync</code>.</p>
+        <input @bind="textToCopy" />
+        <button @onclick="CopyText">Copy</button>
+        @if (!string.IsNullOrEmpty(status))
+        {
+            <p class="status">@status</p>
+        }
+    </div>
+
+    <div class="interop-row">
+        <h2>2. JS → C# — window resize listener</h2>
+        <p class="hint">JS adds a <code>window.resize</code> handler that calls a <code>[JSInvokable]</code> C# method on this component.</p>
+        <p>Resize your browser window:</p>
+        <p class="dimensions">@width &times; @height px</p>
+    </div>
+</section>
+
+@code {
+    private string textToCopy = "Hello from Blazor!";
+    private string status = "";
+    private int width;
+    private int height;
+
+    private IJSObjectReference? module;
+    private DotNetObjectReference<JsInterop>? selfRef;
+    private int resizeHandlerId;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/js-interop.js");
+        selfRef = DotNetObjectReference.Create(this);
+        resizeHandlerId = await module.InvokeAsync<int>("listenForResize", selfRef);
+    }
+
+    private async Task CopyText()
+    {
+        if (module is null) return;
+        await module.InvokeVoidAsync("copyToClipboard", textToCopy);
+        status = $"Copied at {DateTime.Now:HH:mm:ss}";
+    }
+
+    [JSInvokable]
+    public void OnResize(int w, int h)
+    {
+        width = w;
+        height = h;
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (module is not null)
+        {
+            try
+            {
+                await module.InvokeVoidAsync("stopListening", resizeHandlerId);
+                await module.DisposeAsync();
+            }
+            catch (JSDisconnectedException) { }
+        }
+        selfRef?.Dispose();
+    }
+}
