@@ -1,0 +1,54 @@
+@page "/events"
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Events</PageTitle>
+
+<h1>Events</h1>
+
+<section class="evt-row">
+    <h2>1. @@onclick — the simplest event</h2>
+    <p>Count: <strong>@count</strong></p>
+    <button @onclick="() => count++">+1</button>
+    <button @onclick="() => count = 0">Reset</button>
+</section>
+
+<section class="evt-row">
+    <h2>2. Event args — handlers receive real DOM event data</h2>
+    <button @onclick="HandleClick">Click me (try holding Shift / Ctrl / Alt)</button>
+    <p>Last click: <strong>@clickInfo</strong></p>
+</section>
+
+<section class="evt-row">
+    <h2>3. @@onkeydown — any DOM event works the same way</h2>
+    <input @onkeydown="HandleKey" placeholder="Press any key" />
+    <p>Last key: <strong>@lastKey</strong></p>
+</section>
+
+<section class="evt-row">
+    <h2>4. @@onclick:preventDefault — modifier to stop the browser default</h2>
+    <a href="https://example.com" @onclick="HandleLink" @onclick:preventDefault>
+        Click this link (without preventDefault it would navigate away)
+    </a>
+    <p>Link clicks: <strong>@linkClicks</strong></p>
+</section>
+
+@code {
+    private int count;
+    private string clickInfo = "(none yet)";
+    private string lastKey = "(none yet)";
+    private int linkClicks;
+
+    private void HandleClick(MouseEventArgs e)
+    {
+        var modifiers = new List<string>();
+        if (e.ShiftKey) modifiers.Add("Shift");
+        if (e.CtrlKey) modifiers.Add("Ctrl");
+        if (e.AltKey) modifiers.Add("Alt");
+        var mods = modifiers.Count > 0 ? string.Join("+", modifiers) + " + " : "";
+        clickInfo = $"{mods}click at ({e.ClientX:F0}, {e.ClientY:F0})";
+    }
+
+    private void HandleKey(KeyboardEventArgs e) => lastKey = $"\"{e.Key}\" (code: {e.Code})";
+
+    private void HandleLink() => linkClicks++;
+}

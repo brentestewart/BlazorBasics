@@ -1,0 +1,19 @@
+@page "/di"
+@rendermode InteractiveWebAssembly
+@inject GreetingService Greeter
+
+<PageTitle>Dependency injection</PageTitle>
+
+<h1>Dependency injection</h1>
+
+<button class="di-btn" @onclick="Refresh">New greeting</button>
+
+<p class="greeting">@greeting</p>
+
+@code {
+    private string greeting = "";
+
+    protected override void OnInitialized() => greeting = Greeter.Get();
+
+    private void Refresh() => greeting = Greeter.Get();
+}

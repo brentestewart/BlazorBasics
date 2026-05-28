@@ -1,0 +1,46 @@
+@page "/binding"
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Two-way binding</PageTitle>
+
+<h1>Two-way binding</h1>
+
+<section class="bind-row">
+    <h2>1. Plain @@bind — commits on Tab or Enter</h2>
+    <input @bind="plain" />
+    <p>Echo: <strong>@plain</strong></p>
+</section>
+
+<section class="bind-row">
+    <h2>2. @@bind:event="oninput" — tune <em>when</em> the bind fires</h2>
+    <input @bind="live" @bind:event="oninput" />
+    <p>Echo: <strong>@live</strong></p>
+</section>
+
+<section class="bind-row">
+    <h2>3. @@bind:after — run a callback <em>after</em> the bind commits</h2>
+    <input @bind="query" @bind:after="OnQueryChanged" />
+    <p>Bound value: <strong>@query</strong></p>
+    <p>Callback fired: <strong>@searches</strong> time(s)</p>
+    <p class="hint">@@bind already owns the onchange handler — you can't combine @@bind with @@onchange. @@bind:after is the supported hook for side effects.</p>
+</section>
+
+<section class="bind-row">
+    <h2>4. @@bind:get / @@bind:set — take full control of the round-trip</h2>
+    <input @bind:get="phone" @bind:set="SetPhone" @bind:event="oninput" placeholder="Try typing letters — only digits land" />
+    <p>Stored as: <strong>@(string.IsNullOrEmpty(phone) ? "(empty)" : phone)</strong></p>
+    <p class="hint">:set strips non-digits before the value is stored, so letters never even appear in the input. @@bind:after can't do this — the letter would flash on screen before being erased.</p>
+</section>
+
+@code {
+    private string plain = "";
+    private string live = "";
+    private string query = "";
+    private int searches;
+    private string phone = "";
+
+    private void OnQueryChanged() => searches++;
+
+    private void SetPhone(string? value) =>
+        phone = new string((value ?? "").Where(char.IsDigit).ToArray());
+}

@@ -6,6 +6,8 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<IComparisonService, ComparisonServiceClient>();
+builder.Services.AddScoped<GreetingService>();
+builder.Services.AddScoped<ProductService>();
 builder.Services.AddClientValidation();
 
 await builder.Build().RunAsync();

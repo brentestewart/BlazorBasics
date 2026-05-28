@@ -14,6 +14,8 @@ builder.Services.AddValidation();
 builder.Services.AddClientValidation();
 
 builder.Services.AddSingleton<IComparisonService, ComparisonService>();
+builder.Services.AddScoped<GreetingService>();
+builder.Services.AddScoped<ProductService>();
 
 var app = builder.Build();
 
