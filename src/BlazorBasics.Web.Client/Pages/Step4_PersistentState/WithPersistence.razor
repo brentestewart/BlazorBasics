@@ -1,0 +1,39 @@
+@page "/product/with-persistence"
+@rendermode InteractiveWebAssembly
+@inject ProductService Products
+
+<PageTitle>Product (with persistence)</PageTitle>
+
+<section class="product-page">
+    <h1>With <code>[PersistentState]</code></h1>
+
+    <div class="product-card">
+        @if (Product is null)
+        {
+            <p>Loading...</p>
+        }
+        else
+        {
+            <h2>@Product.Name</h2>
+            <p class="price">$@Product.Price</p>
+            <p class="origin">Fetched from: <strong>@Product.FetchedFrom</strong></p>
+        }
+    </div>
+
+    <a class="toggle-link" href="/product/without-persistence">
+        → switch to WITHOUT persistence
+    </a>
+</section>
+
+@code {
+    [PersistentState]
+    public Product? Product { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Product is not null) return;
+
+        var from = OperatingSystem.IsBrowser() ? "Browser" : "Server";
+        Product = await Products.GetAsync(1, from);
+    }
+}
