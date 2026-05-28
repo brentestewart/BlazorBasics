@@ -2,7 +2,7 @@
 
 ## Talk metadata
 
-- **Title (working):** Blazor Basics
+- **Title:** Blazor Fundamentals: Getting Started with Modern .NET Web Development
 - **Length:** ~55 min (target), expandable to 60 with Q&A buffer
 - **Audience:** mixed general developers — assume some web familiarity, no Blazor or .NET specifics
 - **Framework target:** .NET 10 (LTS, GA Nov 2025)
@@ -11,7 +11,7 @@
 
 ## Thesis
 
-Blazor is a component-based web framework where the same C# component can render on the server, in the browser via WebAssembly, or as static HTML — and choosing where it runs is a per-component decision, not a project-wide one. By the end of the talk, the audience should be able to (1) read a `.razor` file, (2) explain what a render mode is and feel the tradeoff between Server and WASM, and (3) know what the .NET 10 era of Blazor looks like.
+Blazor is a component-based web framework where the same C# component can render on the server, in the browser via WebAssembly, or as static HTML. Render mode is configurable at every level — globally, per page, per component, or per instance — with children inheriting from their parent's mode. In practice, most apps pick one mode and live there; the demo shows all four because the audience should feel each before committing. By the end of the talk, the audience should be able to (1) read a `.razor` file, (2) explain what a render mode is and feel the tradeoff between Server and WASM, and (3) pick a render mode for their own app deliberately.
 
 ## Structural approach: fade-spine
 
@@ -40,32 +40,23 @@ The component itself needs to contain (at minimum):
 
 A persistent top-nav switcher links the four pages. The render-mode label is always visible.
 
-**Demo domain:** **LLM Capability Matrix** — an app that compares how different LLMs respond to prompts. The seed data is visibly rigged in Claude's favor (Claude scores 11/10 on everything; competitors score 2–4/10 with snarky annotations). The running joke is established up front by disclosing that Claude built most of the slides and code, and then the bias bleeds through every screen — leaderboard scores, validation messages, persistent state, the render-mode label's flavor text.
+**Demo domain:** **Dashboard with widgets** — a parent `Dashboard` component renders a collection of child `Widget` components. The shape (one parent, many configurable children) is exactly the parent/child component story the talk needs to teach, and the visual metaphor (tiles on a board) is familiar to any developer.
 
-The comedic theme is *baked into the data*, not layered on as commentary. Every render of the leaderboard is a joke beat without extra effort, which is why this beat the "talk-builder with narration" alternative.
+**Feature → demo mapping:**
 
-**Feature → comedic-beat mapping:**
-
-| Blazor feature | Demo manifestation | Joke surface |
-|---|---|---|
-| Counter / rapid-click | Upvote button on each LLM in the leaderboard | Claude's vote total climbs visibly; competitors' totals don't |
-| `@bind` two-way | Prompt input at top of page | n/a (clean teaching) |
-| `@foreach` list | Leaderboard rendering | Every row is a rigged-data joke |
-| `EditForm` + nested validation | "Submit a comparison" form: `Comparison { Prompt, Category, Submitter { Name, Email, FavoriteLLM } }` | Validation messages can be in-character (passive-aggressive) |
-| Static SSR form post-back | Submit comparison, page renders with new row | Claude rigs the data even when it can't talk back |
-| `RendererInfo` label | Bottom of every page | Flavor text from Claude about the current mode |
-| `[PersistentState]` | Leaderboard fetched on load, persists across prerender boundary | "Claude does not forget." |
-| WASM Hot Reload | Live edit Claude's score during the demo | Audience watches the number change in real time |
-| Auto mode | First slow, then fast | "Even my hosting model is biased toward going fast" |
-
-**Comedic calibration notes (from feedback discussion):**
-
-- *Recorded-talk safety:* lean on obviously-comedic untruths ("GPT can't count zucchinis"), not almost-true-sounding ones that travel out of context.
-- *Audience model bias:* spread jabs across multiple competitors (GPT, Gemini, Llama) so no single fan base feels singled out.
-- *Self-deprecation:* let Claude trip on its own bit at least once — refuses to render a slide "for safety reasons" then renders it anyway. Without this, snark becomes preening.
-- *Aging:* favor *personality* jokes (Claude agrees with itself, hedges everything, three paragraphs to say yes) over *capability* jokes (specific benchmarks that get fixed in the next release).
-- *Volume:* one comedic beat per teaching moment, not three. Theme has gravitational pull; the audience should leave remembering Blazor, not the LLM jokes.
-- *Disclosure framing:* "Claude typed it, I picked it" — owns the architectural choices so the audience doesn't discount the technical content.
+| Blazor feature | Demo manifestation |
+|---|---|
+| Counter / rapid-click | Refresh button on each widget |
+| `@bind` two-way | Filter / search input above the dashboard |
+| `@foreach` list | Dashboard renders its widget collection |
+| `[Parameter]` + parent/child | `Dashboard` passes `WidgetData` into each `Widget` |
+| `ChildContent` / `RenderFragment` | `WidgetCard` wraps arbitrary content inside a card chrome |
+| `EditForm` + nested validation | "Create a widget" form: `WidgetRequest { Title, Category, Owner { Name, Email }, Metrics[] }` |
+| Static SSR form post-back | Submit a widget request, page renders with new tile |
+| `RendererInfo` label | Render-mode badge at the bottom of every page |
+| `[PersistentState]` | Widget collection fetched on load, persists across prerender boundary |
+| WASM Hot Reload | Live edit a widget's markup or style during the demo |
+| Auto mode | Dashboard first slow, then fast |
 
 ## Section-by-section flow
 
@@ -77,20 +68,22 @@ Render modes in the foreground.
 - Switch to `/server`. Turn on Chrome devtools throttling ("Slow 4G"). Click the counter. Visible lag per click.
 - Switch to `/static`. Click the counter. *Nothing happens.* Pause. Use that silence to introduce the concept: "Blazor lets you pick where your component runs. That choice has consequences. Let's see what they are."
 - One slide: the four render modes, one sentence each. No deep dive yet.
+- Brief follow-up beat: Static SSR doesn't have to mean slow blocking — `[StreamRendering]` lets a component stream initial HTML while async work completes. One sentence + the attribute on screen.
 
 **Tier 1 covered:** render modes (introduced)
-**Tier 2 covered:** `RendererInfo` / `AssignedRenderMode` (visible the whole talk)
+**Tier 2 covered:** `RendererInfo` / `AssignedRenderMode` (visible the whole talk), `[StreamRendering]`
 
 ### 2. The component model (8 min)
 
 Render modes recede. Work on `/wasm` so feedback is instant.
 
-- Open the `.razor` file behind the page. Walk through: markup + `@code` block in one file.
-- Introduce `[Parameter]` by passing a value into the component.
+- Open the `.razor` file behind the page. Walk through: markup + `@code` block in one file. Point out the sibling `.razor.css` for scoped styles + `::deep` for piercing into descendants.
+- Introduce `[Parameter]` by passing a value into the component. Then show `[Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? Attributes { get; set; }` for forwarding arbitrary HTML attributes onto a wrapped element (attribute splatting).
 - Show `ChildContent` / `RenderFragment` briefly via a wrapper.
 - Two-way binding with `@bind` on the text input.
+- Component lifecycle: `OnInitialized(Async)`, `OnParametersSet(Async)`, `OnAfterRender(Async)`, and when `StateHasChanged()` is needed. One slide + a brief in-component demo that logs each lifecycle hook.
 
-**Tier 1 covered:** component model, parameters, child content, data binding
+**Tier 1 covered:** component model, parameters, catch-all parameter, child content, data binding, lifecycle, CSS isolation
 
 ### 3. Events, control flow, routing, DI (12 min)
 
@@ -98,12 +91,14 @@ Still on `/wasm`. Linear teaching, no mode-flipping.
 
 - `@onclick` with lambdas and `EventCallback<T>`.
 - `@if` / `@foreach` rendering a list.
-- `@page` directive — show how `/wasm` route is just an attribute on the file.
+- `@page` directive — show how `/wasm` route is just an attribute on the file. Include a route parameter with a constraint (e.g., `@page "/comparison/{id:int}"`).
+- Route constraints reference slide — full list (`int`, `long`, `float`, `double`, `decimal`, `bool`, `datetime`, `guid`, `alpha`, `regex`, `minlength`, `maxlength`, `min`, `max`, `range`, `length`). Audience-photographs-it slide; you keep moving.
+- `[SupplyParameterFromQuery]` — bind a property directly to a query string parameter. One-line aside in the routing flow.
 - `NavigationManager` and `NavLink`. Mention `NotFoundPage` in passing (no demo).
 - `@inject` a typed `HttpClient`. Quick aside on service lifetimes.
 - One sentence on JS interop: `IJSRuntime.InvokeAsync` — show a one-line `console.log` from C#. Move on.
 
-**Tier 1 covered:** events, control flow, routing, DI, JS interop
+**Tier 1 covered:** events, control flow, routing, route constraints, query-string parameters, DI, JS interop
 **Tier 2 covered:** `NotFoundPage` (mention)
 
 ### 4. Forms and validation (10 min)
@@ -138,7 +133,9 @@ Tie it back to moments they saw, not generic tradeoffs.
 - "Remember when Server lagged under throttle? That's why a drawing pad doesn't live there."
 - "Remember when the form still submitted under Static SSR? That's where you start — interactivity is opt-in."
 - "Auto is the answer when you don't want to choose."
-- One slide of decision heuristics. One slide of "where to go next" (docs, samples, the research doc URL).
+- One slide of decision heuristics. Include a one-liner: "If you need a true offline / installable PWA / static-only hosting, reach for the standalone WASM template instead of Blazor Web App."
+- One "Miscellaneous Blazor features" slide — quick survey of things the talk didn't have time to demo: `<PageTitle>` and `<HeadContent>` for setting page title and head content from a component; pointers to QuickGrid, JS interop deeper APIs, and component libraries.
+- One slide of "where to go next" (docs, samples, the research doc URL).
 
 ## Feature checklist
 
@@ -147,19 +144,26 @@ Track these against the demo project as it's built.
 **Tier 1 — core Blazor (intro spine):**
 
 - [ ] Component model: `.razor` file, `[Parameter]`, `ChildContent` / `RenderFragment`
+- [ ] Catch-all parameter: `[Parameter(CaptureUnmatchedValues = true)]` for attribute splatting
+- [ ] CSS isolation: `.razor.css`, `::deep` selector
+- [ ] Component lifecycle: `OnInitialized(Async)`, `OnParametersSet(Async)`, `OnAfterRender(Async)`, `StateHasChanged()`
 - [ ] Data binding: `@bind`, `@bind:after`
 - [ ] Event handling: `@onclick`, lambdas, `EventCallback<T>`
 - [ ] Control flow: `@if`, `@foreach`
-- [ ] Routing: `@page`, route params, `NavLink`, `NavigationManager`
+- [ ] Routing: `@page`, route params, route constraints (reference slide), `NavLink`, `NavigationManager`
+- [ ] Query-string params: `[SupplyParameterFromQuery]`
 - [ ] DI: `@inject`, typed `HttpClient`
 - [ ] Render modes: Static SSR, Server, WASM, Auto (per-component)
 - [ ] Static SSR + enhanced navigation: form post-back works under SSR
 - [ ] Forms and validation: `EditForm`, `InputText`, `DataAnnotationsValidator`, `ValidationMessage`
 - [ ] JS interop: one `IJSRuntime.InvokeAsync` moment
+- [ ] Header components: `<PageTitle>`, `<HeadContent>` (Miscellaneous closer)
+- [ ] Standalone WASM template mention (one line in heuristics)
 
 **Tier 2 — must-show .NET 9/10 features:**
 
 - [ ] `RendererInfo.Name` and `AssignedRenderMode` (visible label, all four pages)
+- [ ] `[StreamRendering]` (Section 1 follow-up beat)
 - [ ] `[PersistentState]` (before/after comparison)
 - [ ] `AddValidation()` + `[ValidatableType]` with nested model
 - [ ] `NotFoundPage` parameter on `Router` (mention)
@@ -186,6 +190,7 @@ Explicitly excluded so the scope stays honest:
 - Bundler-friendly output, fingerprinting internals, boot config inlining
 - MAUI Blazor Hybrid template
 - Breaking changes list — kept as reference material in research doc, not stage material
+- Daniel Roth "modern front end web framework" quote + "Browser + Razor" etymology reveal (prior deck slides 5–6) — cold-open demo is the hook now
 
 ## Risks and mitigations
 
@@ -198,8 +203,6 @@ Explicitly excluded so the scope stays honest:
 
 ## Open decisions
 
-1. **Snark tone for Claude's voice.** Decided on "LLM Capability Matrix" with rigged data, but the *flavor* of Claude's snark is still open: dry/deadpan ("GPT did not respond. Typical."), corporate-intern earnestness ("Claude exceeded all internal KPIs this quarter"), or quietly-disappointed-in-humans ("Brent has selected GPT. We will discuss this later."). Pick one register and hold it across the talk for consistency.
-2. **Which competitor LLMs to feature on the leaderboard.** Currently sketched as Claude / GPT / Gemini / Llama. Spread is safer than concentration; four is a clean number; adding a fifth (DeepSeek? Mistral?) gives one more comedic slot but adds visual clutter.
-2. **Whether to use the .NET 10 Blazor Web App template as-is or strip it down.** Default template includes Identity scaffolding — useful for realism, noisy for an intro. Lean toward stripping unless auth is needed for the demo.
-3. **Whether to ship the demo repo for attendees.** If yes, the project structure becomes part of the artifact — affects how much boilerplate to leave in.
-4. **Slot for `NavigateTo` scroll-behavior change and other breaking changes.** Currently cut. Reconsider only if the audience skews toward existing .NET 8 Blazor users.
+1. **Whether to use the .NET 10 Blazor Web App template as-is or strip it down.** Default template includes Identity scaffolding — useful for realism, noisy for an intro. Lean toward stripping unless auth is needed for the demo.
+2. **Whether to ship the demo repo for attendees.** If yes, the project structure becomes part of the artifact — affects how much boilerplate to leave in.
+3. **Slot for `NavigateTo` scroll-behavior change and other breaking changes.** Currently cut. Reconsider only if the audience skews toward existing .NET 8 Blazor users.

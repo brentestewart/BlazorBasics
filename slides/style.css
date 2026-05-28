@@ -1,0 +1,28 @@
+/* Hide the Goto (slide-jumper) dialog. */
+#slidev-goto-dialog {
+  display: none !important;
+}
+
+/* Kill Frankfurt's black section-nav "progress bar" header. */
+header.absolute.top-0.left-0.right-0.flex.shadow-md.shadow-black {
+  display: none !important;
+}
+
+/* Frankfurt's H1 padding was sized to tuck under the black header bar.
+   With the bar gone, trim the inner top padding but keep the negative
+   margin so the blue strip still reaches the slide's top edge.
+   (Skip center / cover / intro layouts, where H1 is a centered chip.) */
+.slidev-layout:not(.center):not(.cover):not(.intro) h1 {
+  padding-top: 3rem !important;
+  padding-bottom: 1rem !important;
+}
+
+/* Inline `code` inside an H1 (e.g. `[StreamRendering]`, `[PersistentState]`)
+   was picking up its own background, clashing with Frankfurt's blue H1 bar.
+   Make inline code blend in with the heading. */
+.slidev-layout h1 code {
+  background: transparent !important;
+  color: inherit !important;
+  padding: 0 !important;
+  font-size: inherit !important;
+}
