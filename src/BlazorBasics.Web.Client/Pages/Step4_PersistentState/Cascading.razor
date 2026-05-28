@@ -1,0 +1,37 @@
+@page "/cascading"
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Cascading values</PageTitle>
+
+<section class="cascading-page">
+    <h1>Cascading values</h1>
+
+    <p>
+        The page sets a <code>Theme</code> on a single <code>&lt;ThemeProvider&gt;</code>.
+        Every nested component picks it up via <code>[CascadingParameter]</code> —
+        no parameter is passed down at any level.
+    </p>
+
+    <button class="toggle-btn" @onclick="ToggleTheme">
+        Switch to @(current.Name == "light" ? "dark" : "light") theme
+    </button>
+
+    <ThemeProvider CurrentTheme="current">
+        <ThemedCard>
+            <ThemedHeader>I am a header three levels deep</ThemedHeader>
+            <p>This card, the header above, and the button below all read the same cascading Theme — they don't take a Theme parameter from me.</p>
+            <ThemedCard>
+                <ThemedHeader>Nested card</ThemedHeader>
+                <p>Even nested arbitrarily, descendants still see the cascade.</p>
+                <ThemedButton>I am the deepest themed button</ThemedButton>
+            </ThemedCard>
+        </ThemedCard>
+    </ThemeProvider>
+</section>
+
+@code {
+    private Theme current = new() { Name = "light" };
+
+    private void ToggleTheme() =>
+        current = new Theme { Name = current.Name == "light" ? "dark" : "light" };
+}

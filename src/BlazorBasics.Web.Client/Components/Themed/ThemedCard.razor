@@ -1,0 +1,11 @@
+@* Reads the cascading Theme. Notice: no parameter passed in — it's pulled out of the ambient cascade *@
+
+<div class="themed-card @Theme.Name">
+    @ChildContent
+</div>
+
+@code {
+    [CascadingParameter] public Theme Theme { get; set; } = new();
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

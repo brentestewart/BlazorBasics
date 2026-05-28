@@ -1,0 +1,13 @@
+.themed-header {
+    margin: 0 0 0.5rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.themed-header.light {
+    color: #1e40af;
+}
+
+.themed-header.dark {
+    color: #93c5fd;
+}

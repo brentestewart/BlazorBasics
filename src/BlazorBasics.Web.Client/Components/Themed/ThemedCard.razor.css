@@ -1,0 +1,18 @@
+.themed-card {
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    border: 1px solid;
+    margin: 0.75rem 0;
+}
+
+.themed-card.light {
+    background: #ffffff;
+    color: #1f2937;
+    border-color: #cbd5e1;
+}
+
+.themed-card.dark {
+    background: #1f2937;
+    color: #f9fafb;
+    border-color: #475569;
+}

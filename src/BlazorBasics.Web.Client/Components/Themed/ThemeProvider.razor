@@ -1,0 +1,11 @@
+@* Wraps children in a <CascadingValue> so every descendant can pick up the current Theme via [CascadingParameter] *@
+
+<CascadingValue Value="CurrentTheme">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter, EditorRequired] public Theme CurrentTheme { get; set; } = new();
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

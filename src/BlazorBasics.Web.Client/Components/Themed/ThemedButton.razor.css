@@ -1,0 +1,19 @@
+.themed-button {
+    padding: 0.4rem 0.9rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: 1px solid;
+}
+
+.themed-button.light {
+    background: #1e40af;
+    color: #ffffff;
+    border-color: #1e40af;
+}
+
+.themed-button.dark {
+    background: #93c5fd;
+    color: #1f2937;
+    border-color: #93c5fd;
+}

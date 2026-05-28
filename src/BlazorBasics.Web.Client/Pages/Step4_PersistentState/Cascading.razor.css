@@ -1,0 +1,15 @@
+.cascading-page {
+    max-width: 40rem;
+    margin: 1.5rem 0;
+}
+
+.toggle-btn {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 1px solid #94a3b8;
+    background: #ffffff;
+    color: #1f2937;
+    cursor: pointer;
+    margin: 1rem 0;
+}
