@@ -3,18 +3,20 @@
 <PageTitle>Stream rendering (blocking)</PageTitle>
 
 <section class="stream-demo">
+    <div class="mode-banner">
+        <span class="mode-tag">BLOCKING</span>
+        <span class="mode-desc">Server waits for everything before sending any HTML</span>
+    </div>
+
     <h1>Without <code>[StreamRendering]</code></h1>
     <p>
-        Same component as the streamed page, no attribute. The server waits
-        for the whole <code>OnInitializedAsync</code> to finish before sending
-        any HTML &mdash; expect a blank tab for ~3 seconds, then everything appears at once.
+        Same component as the streamed page, no attribute. Expect a blank tab
+        for ~3 seconds, then everything appears at once.
     </p>
 
     <a class="toggle-link" href="/stream">
-        → see the same component <strong>with</strong> [StreamRendering]
+        → switch to the STREAMING version
     </a>
 
     <StreamSections />
 </section>
-
-<RenderModeBadge />

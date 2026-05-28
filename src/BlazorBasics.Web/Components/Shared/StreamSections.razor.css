@@ -1,5 +1,6 @@
 .stream-section {
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--accent, #e0e0e0);
+    border-left: 4px solid var(--accent, #c0c0c0);
     border-radius: 0.4rem;
     padding: 0.75rem 1rem;
     margin: 0.75rem 0;
@@ -9,6 +10,7 @@
 .stream-section h2 {
     margin: 0 0 0.4rem 0;
     font-size: 1.05rem;
+    color: var(--accent-text, inherit);
 }
 
 .placeholder {
@@ -20,4 +22,5 @@
 .loaded {
     margin: 0;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--accent-text, inherit);
 }

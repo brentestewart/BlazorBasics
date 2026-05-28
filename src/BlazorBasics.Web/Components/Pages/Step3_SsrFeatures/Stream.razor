@@ -4,18 +4,20 @@
 <PageTitle>Stream rendering (streamed)</PageTitle>
 
 <section class="stream-demo">
+    <div class="mode-banner">
+        <span class="mode-tag">STREAMING</span>
+        <span class="mode-desc">Server flushes chunks as each <code>await</code> resolves</span>
+    </div>
+
     <h1>With <code>[StreamRendering]</code></h1>
     <p>
-        The server flushes chunks as each section's <code>await</code> resolves.
-        You should see the three placeholders appear immediately,
-        then each section fill in one second at a time.
+        You should see the three placeholders appear immediately, then each
+        section fill in one second at a time.
     </p>
 
     <a class="toggle-link" href="/stream-blocking">
-        → see the same component <strong>without</strong> [StreamRendering]
+        → switch to the BLOCKING version
     </a>
 
     <StreamSections />
 </section>
-
-<RenderModeBadge />
