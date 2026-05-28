@@ -1,57 +1,84 @@
 <div class="rm-banner">
-    @if (AssignedRenderMode is null)
-    {
-        <div class="rm-prefix">Render mode</div>
-        <div class="rm-steps">
-            <div class="rm-step current mode-static">
-                <div class="rm-name">Static</div>
-                <div class="rm-sub">never interactive</div>
+    <div class="rm-header">
+        <div class="rm-title">Render path</div>
+        @if (AssignedRenderMode is not null)
+        {
+            <div class="rm-assigned">
+                <span class="rm-assigned-label">assigned</span>
+                <span class="rm-assigned-value">@AssignedRenderMode.GetType().Name.Replace("RenderMode", "")</span>
             </div>
-        </div>
-    }
-    else
-    {
-        <div class="rm-prefix">Render path</div>
-        <div class="rm-steps">
+        }
+        else
+        {
+            <div class="rm-assigned">
+                <span class="rm-assigned-label">no @@rendermode</span>
+                <span class="rm-assigned-value">(static only)</span>
+            </div>
+        }
+    </div>
+    <ol class="rm-timeline">
+        @if (Path is not null)
+        {
             @for (var i = 0; i < Path.Count; i++)
             {
                 var step = Path[i];
                 var isCurrent = i == Path.Count - 1;
-                @if (i > 0)
-                {
-                    <div class="rm-arrow">→</div>
-                }
-                <div class="rm-step @(isCurrent ? "current" : "prior") mode-@(step.ToLowerInvariant())">
-                    <div class="rm-name">@step</div>
-                </div>
+                <li class="rm-step @(isCurrent ? "current" : "prior") mode-@(step.Mode.ToLowerInvariant())">
+                    @if (isCurrent)
+                    {
+                        <span class="rm-time rm-time-current">current</span>
+                    }
+                    else
+                    {
+                        <span class="rm-time">+@FormatElapsed(Path[i + 1].At)</span>
+                    }
+                    <span class="rm-dot"></span>
+                    <span class="rm-name">@step.Mode</span>
+                </li>
             }
-        </div>
-        <div class="rm-suffix">
-            <span class="rm-suffix-label">assigned</span>
-            <span class="rm-suffix-value">@AssignedRenderMode.GetType().Name.Replace("RenderMode", "")</span>
-        </div>
-    }
+        }
+    </ol>
 </div>
 
 @code {
-    private List<string> Path { get; set; } = new();
+    public record PathStep(string Mode, TimeSpan At);
+
+    [PersistentState(AllowUpdates = true)]
+    public List<PathStep>? Path { get; set; }
+
+    [PersistentState(AllowUpdates = true)]
+    public DateTime StartedUtc { get; set; }
 
     protected override void OnInitialized()
     {
-        if (AssignedRenderMode is not null)
+        if (StartedUtc == default)
         {
-            Path.Add("Static");
+            StartedUtc = DateTime.UtcNow;
         }
+        Path ??= new();
+        Record(RendererInfo.Name);
     }
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (AssignedRenderMode is null) return;
-        var current = RendererInfo.Name;
-        if (Path[^1] != current)
+        Record(RendererInfo.Name);
+    }
+
+    private void Record(string mode)
+    {
+        if (Path is null) return;
+        if (Path.Count == 0 || Path[^1].Mode != mode)
         {
-            Path.Add(current);
+            var elapsed = DateTime.UtcNow - StartedUtc;
+            Path.Add(new PathStep(mode, elapsed));
             StateHasChanged();
         }
+    }
+
+    private static string FormatElapsed(TimeSpan elapsed)
+    {
+        if (elapsed.TotalMilliseconds < 1) return "0ms";
+        if (elapsed.TotalSeconds < 1) return $"{elapsed.TotalMilliseconds:F0}ms";
+        return $"{elapsed.TotalSeconds:F3}s";
     }
 }

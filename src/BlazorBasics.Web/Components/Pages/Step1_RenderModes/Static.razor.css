@@ -1,0 +1,40 @@
+.static-banner {
+    background: linear-gradient(180deg, #1f2330, #15171f);
+    color: #fff;
+    border-radius: 0.6rem;
+    margin: 0 0 1.5rem 0;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.static-banner-title {
+    font-size: 1rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.static-banner-name {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.25rem;
+}
+
+.static-banner-note {
+    font-size: 0.9rem;
+    color: #aab0c2;
+}
+
+.static-banner code {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.25rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.85rem;
+    color: #ffd966;
+}
