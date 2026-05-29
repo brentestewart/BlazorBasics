@@ -1,0 +1,14 @@
+@* Generic templated list — RenderFragment<T>. *@
+@typeparam TItem
+
+<ul class="item-list">
+    @foreach (var item in Items)
+    {
+        <li>@ItemTemplate?.Invoke(item)</li>
+    }
+</ul>
+
+@code {
+    [Parameter] public IEnumerable<TItem> Items { get; set; } = Enumerable.Empty<TItem>();
+    [Parameter] public RenderFragment<TItem>? ItemTemplate { get; set; }
+}

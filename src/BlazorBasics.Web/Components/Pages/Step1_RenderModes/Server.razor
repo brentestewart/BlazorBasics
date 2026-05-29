@@ -4,3 +4,15 @@
 <PageTitle>Server</PageTitle>
 
 <RenderModeBadge />
+
+<PageFlow Phases="@phases" />
+
+@code {
+    private readonly PageFlow.Phase[] phases =
+    {
+        new("HTTP request", "Browser navigates to /server.", "request"),
+        new("Prerender on server", "Razor renders initial HTML for fast first paint.", "ssr"),
+        new("SignalR connects", "Browser opens a WebSocket back to the server.", "signalr"),
+        new("InteractiveServer", "Component takes over. Every UI event round-trips over the circuit.", "server"),
+    };
+}

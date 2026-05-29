@@ -1,39 +1,32 @@
-<article class="stream-section">
-    <h2>Section A</h2>
-    @if (sectionA is null) { <p class="placeholder">waiting...</p> }
-    else { <p class="loaded">@sectionA</p> }
-</article>
+@for (var i = 0; i < sections.Length; i++)
+{
+    var idx = i;
+    var label = labels[idx];
+    var value = sections[idx];
+    var loaded = value is not null;
 
-<article class="stream-section">
-    <h2>Section B</h2>
-    @if (sectionB is null) { <p class="placeholder">waiting...</p> }
-    else { <p class="loaded">@sectionB</p> }
-</article>
-
-<article class="stream-section">
-    <h2>Section C</h2>
-    @if (sectionC is null) { <p class="placeholder">waiting...</p> }
-    else { <p class="loaded">@sectionC</p> }
-</article>
+    <article class="stream-section @(loaded ? "loaded" : "waiting")">
+        <header class="section-head">
+            <span class="status-icon"></span>
+            <h2>Section @label</h2>
+        </header>
+        <p class="section-body">@(value ?? "waiting for data...")</p>
+    </article>
+}
 
 @code {
-    private string? sectionA;
-    private string? sectionB;
-    private string? sectionC;
+    private readonly string[] labels = { "A", "B", "C" };
+    private readonly string?[] sections = new string?[3];
 
     protected override async Task OnInitializedAsync()
     {
         var start = DateTime.Now;
 
-        await Task.Delay(1000);
-        sectionA = $"Loaded at +{(DateTime.Now - start).TotalSeconds:F2}s";
-        StateHasChanged();
-
-        await Task.Delay(1000);
-        sectionB = $"Loaded at +{(DateTime.Now - start).TotalSeconds:F2}s";
-        StateHasChanged();
-
-        await Task.Delay(1000);
-        sectionC = $"Loaded at +{(DateTime.Now - start).TotalSeconds:F2}s";
+        for (var i = 0; i < sections.Length; i++)
+        {
+            await Task.Delay(1000);
+            sections[i] = $"Loaded at +{(DateTime.Now - start).TotalSeconds:F2}s";
+            if (i < sections.Length - 1) StateHasChanged();
+        }
     }
 }

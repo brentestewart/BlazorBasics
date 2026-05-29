@@ -1,0 +1,50 @@
+@page "/routing"
+@page "/routing/{id:int}"
+@page "/routing/{id:int}/{name}"
+@page "/routing/everything/{*path}"
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Routing</PageTitle>
+
+<h1>Routing</h1>
+
+<p class="lede">
+    Four <code>@@page</code> directives on this component. Try the URLs below
+    and watch what each one captures.
+</p>
+
+<section class="routing-section">
+    <h2>Try these URLs</h2>
+    <nav class="route-links">
+        <a href="/routing">/routing</a>
+        <a href="/routing/42">/routing/42</a>
+        <a href="/routing/42/sales">/routing/42/sales</a>
+        <a href="/routing/everything/a/b/c">/routing/everything/a/b/c</a>
+        <a href="/routing/abc" class="bad">/routing/abc &nbsp;<small>(<code>:int</code> blocks this &rarr; 404)</small></a>
+    </nav>
+</section>
+
+<section class="routing-section">
+    <h2>Captured route values</h2>
+    <dl class="captured">
+        <dt><code>Id</code></dt>
+        <dd>@(Id?.ToString() ?? "(none)")</dd>
+
+        <dt><code>Name</code></dt>
+        <dd>@(Name ?? "(none)")</dd>
+
+        <dt><code>Path</code></dt>
+        <dd>@(Path ?? "(none)")</dd>
+    </dl>
+
+    <p class="hint">
+        Route parameters land on <code>[Parameter]</code> properties by name. The
+        framework parses and type-checks before the component renders.
+    </p>
+</section>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    [Parameter] public string? Name { get; set; }
+    [Parameter] public string? Path { get; set; }
+}

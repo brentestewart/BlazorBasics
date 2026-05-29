@@ -18,9 +18,12 @@
     </NavGroup>
 
     <NavGroup StepNumber="2" IsOpen="@IsCurrent(Step2Paths)">
+        <NavLink class="nav-link" href="parameters">Parameters</NavLink>
+        <NavLink class="nav-link" href="child-content">ChildContent / RenderFragment</NavLink>
         <NavLink class="nav-link" href="binding">Binding</NavLink>
         <NavLink class="nav-link" href="events">Events</NavLink>
         <NavLink class="nav-link" href="lifecycle">Lifecycle</NavLink>
+        <NavLink class="nav-link" href="routing">Routing</NavLink>
         <NavLink class="nav-link" href="di">Dependency injection</NavLink>
     </NavGroup>
 
@@ -31,8 +34,8 @@
     </NavGroup>
 
     <NavGroup StepNumber="4" IsOpen="@IsCurrent(Step4Paths)">
-        <NavLink class="nav-link" href="product/with-persistence">Product (with persistence)</NavLink>
-        <NavLink class="nav-link" href="product/without-persistence">Product (without persistence)</NavLink>
+        <NavLink class="nav-link" href="product/1/with-persistence">Product (with persistence)</NavLink>
+        <NavLink class="nav-link" href="product/1/without-persistence">Product (without persistence)</NavLink>
         <NavLink class="nav-link" href="cascading">Cascading values</NavLink>
     </NavGroup>
 
@@ -43,9 +46,9 @@
 
 @code {
     private static readonly string[] Step1Paths = ["static", "server", "wasm", "wasm-no-prerender", "auto"];
-    private static readonly string[] Step2Paths = ["binding", "events", "lifecycle", "di"];
+    private static readonly string[] Step2Paths = ["parameters", "child-content", "binding", "events", "lifecycle", "routing", "di"];
     private static readonly string[] Step3Paths = ["stream", "stream-blocking", "submit", "comparison"];
-    private static readonly string[] Step4Paths = ["product/with-persistence", "product/without-persistence", "cascading"];
+    private static readonly string[] Step4Paths = ["product", "cascading"];
     private static readonly string[] Step5Paths = ["js-interop"];
 
     private bool IsCurrent(string[] paths)

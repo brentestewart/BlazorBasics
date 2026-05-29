@@ -1,0 +1,90 @@
+.page-flow {
+    margin: 1.25rem 0 2rem 0;
+}
+
+.pf-title {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    font-weight: 700;
+}
+
+.pf-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 0.5rem;
+}
+
+/* ─── Cards ───────────────────────────────────────────────── */
+
+.pf-card {
+    position: relative;
+    flex: 1 1 13rem;
+    min-width: 13rem;
+    padding: 0.85rem 1rem 0.95rem 1rem;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-left: 5px solid var(--kind-accent, #94a3b8);
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.pf-num {
+    position: absolute;
+    top: -0.65rem;
+    left: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: var(--kind-accent, #94a3b8);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.pf-name {
+    font-weight: 700;
+    color: var(--kind-text, #1e293b);
+    margin-top: 0.25rem;
+}
+
+.pf-desc {
+    font-size: 0.85rem;
+    color: #475569;
+    line-height: 1.4;
+}
+
+/* ─── Arrow connector ─────────────────────────────────────── */
+
+.pf-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 1.6rem;
+    line-height: 1;
+    flex: 0 0 auto;
+    user-select: none;
+}
+
+/* ─── Kind palette ────────────────────────────────────────── */
+
+.kind-request  { --kind-accent: #64748b; --kind-text: #1e293b; }
+.kind-ssr      { --kind-accent: #16a34a; --kind-text: #14532d; background: #f0fdf4; }
+.kind-signalr  { --kind-accent: #d97706; --kind-text: #78350f; background: #fffbeb; }
+.kind-server   { --kind-accent: #16a34a; --kind-text: #14532d; }
+.kind-wasm     { --kind-accent: #6d28d9; --kind-text: #4c1d95; background: #f5f3ff; }
+.kind-static   { --kind-accent: #64748b; --kind-text: #334155; }
+.kind-cache    { --kind-accent: #0ea5e9; --kind-text: #0c4a6e; background: #f0f9ff; }

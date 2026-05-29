@@ -7,3 +7,14 @@
     <div class="static-banner-name">Static</div>
     <div class="static-banner-note">no <code>@@rendermode</code> declared &mdash; no interactive transition</div>
 </div>
+
+<PageFlow Phases="@phases" />
+
+@code {
+    private readonly PageFlow.Phase[] phases =
+    {
+        new("HTTP request", "Browser navigates to /static.", "request"),
+        new("Server renders HTML", "Razor produces the page on the server. No @rendermode is declared.", "ssr"),
+        new("Browser displays it", "Static HTML — no SignalR, no WASM bundle, no interactive transition.", "static"),
+    };
+}

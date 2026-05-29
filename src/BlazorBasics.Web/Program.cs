@@ -1,8 +1,6 @@
 using BlazorBasics.Web.Client;
-using BlazorBasics.Web.Client.Models;
 using BlazorBasics.Web.Client.Services;
 using BlazorBasics.Web.Components;
-using BlazorBasics.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +11,6 @@ builder.Services.AddRazorComponents()
 builder.Services.AddValidation();
 builder.Services.AddClientValidation();
 
-builder.Services.AddSingleton<IComparisonService, ComparisonService>();
 builder.Services.AddScoped<GreetingService>();
 builder.Services.AddScoped<ProductService>();
 
@@ -33,14 +30,6 @@ app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages:
 app.UseHttpsRedirection();
 app.UseAntiforgery();
 app.MapStaticAssets();
-
-app.MapGet("/api/comparisons", (IComparisonService svc) => svc.ListAsync());
-app.MapGet("/api/comparisons/{id:int}", async (int id, IComparisonService svc) =>
-{
-    var c = await svc.GetAsync(id);
-    return c is null ? Results.NotFound() : Results.Ok(c);
-});
-app.MapPost("/api/comparisons", (Comparison c, IComparisonService svc) => svc.SubmitAsync(c));
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()

@@ -1,0 +1,12 @@
+@* Single ChildContent slot. *@
+<div class="panel">
+    <h4 class="panel-title">@Title</h4>
+    <div class="panel-body">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

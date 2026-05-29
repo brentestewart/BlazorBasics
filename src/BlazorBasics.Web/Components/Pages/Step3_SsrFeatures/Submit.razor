@@ -1,33 +1,16 @@
 @page "/submit"
+@inject NavigationManager Nav
 
 <PageTitle>Submit personal info</PageTitle>
 
 <section class="submit-form">
     <h2>Personal info</h2>
 
-    @if (Submitted is not null)
+    @if (!string.IsNullOrEmpty(Name))
     {
         <div class="thanks">
-            <h3>Thanks, @Submitted.FirstName!</h3>
-            <dl>
-                <dt>Name</dt>
-                <dd>@Submitted.FirstName @Submitted.LastName</dd>
-
-                <dt>Email</dt>
-                <dd>@Submitted.Email</dd>
-
-                <dt>Date of birth</dt>
-                <dd>@Submitted.DateOfBirth?.ToLongDateString()</dd>
-
-                <dt>Country</dt>
-                <dd>@Submitted.Country</dd>
-
-                <dt>About</dt>
-                <dd>@(string.IsNullOrWhiteSpace(Submitted.AboutYou) ? "(none)" : Submitted.AboutYou)</dd>
-
-                <dt>Newsletter</dt>
-                <dd>@(Submitted.SubscribeToNewsletter ? "Subscribed" : "No thanks")</dd>
-            </dl>
+            <h3>Thanks, @Name!</h3>
+            <p>Your information has been submitted.</p>
             <a class="reset-link" href="/submit">Submit another</a>
         </div>
     }
@@ -108,7 +91,8 @@
     [SupplyParameterFromForm]
     public PersonalInfo? Model { get; set; }
 
-    public PersonalInfo? Submitted { get; private set; }
+    [SupplyParameterFromQuery]
+    public string? Name { get; set; }
 
     private EditContext? editContext;
     private ValidationMessageStore? messages;
@@ -137,6 +121,6 @@
             }
         }
 
-        Submitted = Model;
+        Nav.NavigateTo($"/submit?name={Uri.EscapeDataString(Model.FirstName)}");
     }
 }

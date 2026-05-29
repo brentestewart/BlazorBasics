@@ -1,4 +1,4 @@
-@page "/product/without-persistence"
+@page "/product/{id:int}/without-persistence"
 @rendermode InteractiveWebAssembly
 @inject ProductService Products
 
@@ -20,12 +20,14 @@
         }
     </div>
 
-    <a class="toggle-link" href="/product/with-persistence">
+    <a class="toggle-link" href="/product/@Id/with-persistence">
         → switch to WITH persistence
     </a>
 </section>
 
 @code {
+    [Parameter] public int Id { get; set; }
+
     public Product? Product { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -33,6 +35,6 @@
         if (Product is not null) return;
 
         var from = OperatingSystem.IsBrowser() ? "Browser" : "Server";
-        Product = await Products.GetAsync(1, from);
+        Product = await Products.GetAsync(Id, from);
     }
 }

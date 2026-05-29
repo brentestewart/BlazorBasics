@@ -1,0 +1,34 @@
+.param-section {
+    margin: 1.5rem 0 2rem 0;
+}
+
+.param-section h2 {
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+}
+
+.param-section .hint {
+    font-size: 0.9rem;
+    color: #57606a;
+    max-width: 48rem;
+    margin: 0.25rem 0 0.75rem 0;
+}
+
+.alert-output {
+    margin-top: 2rem;
+    padding: 1rem 1.25rem;
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 0.5rem;
+    max-width: 32rem;
+}
+
+.alert-output h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+}
+
+.alert-output p {
+    margin: 0;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+}

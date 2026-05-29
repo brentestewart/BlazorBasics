@@ -1,0 +1,57 @@
+@page "/parameters"
+@rendermode InteractiveWebAssembly
+@using BlazorBasics.Web.Client.Components.Shared
+
+<PageTitle>Parameters</PageTitle>
+
+<h1>Parameters</h1>
+
+<section class="param-section">
+    <h2>1. Basic parameters &mdash; primitive, complex, callback</h2>
+    <ParameterDemoCard Title="Widget A"
+                       Price="19.99m"
+                       OnAlert="HandleAlert" />
+
+    <ParameterDemoCard Title="Widget B"
+                       Price="29.50m"
+                       OnAlert="HandleAlert" />
+</section>
+
+<section class="param-section">
+    <h2>2. <code>CaptureUnmatchedValues</code> &mdash; forward arbitrary HTML attributes</h2>
+    <p class="hint">
+        These cards declare only <code>Title</code>, <code>Price</code>, and <code>OnAlert</code>.
+        Everything else passed below is splatted onto the root <code>&lt;div&gt;</code> via the
+        catch-all parameter.
+    </p>
+
+    <ParameterDemoCard Title="With custom id"
+                       Price="9.99m"
+                       OnAlert="HandleAlert"
+                       id="custom-card-id"
+                       data-tracking="abc123" />
+
+    <ParameterDemoCard Title="With style + aria"
+                       Price="14.99m"
+                       OnAlert="HandleAlert"
+                       aria-label="A widget with extra a11y metadata"
+                       style="border-color: #fb8500; background: #fff7e6;" />
+
+    <p class="hint">
+        Inspect the rendered markup in browser DevTools &mdash; <code>id</code>,
+        <code>data-tracking</code>, <code>aria-label</code>, and inline <code>style</code> all
+        land on the card root despite never being declared as parameters. The orange
+        border above is the catch-all working visibly.
+    </p>
+</section>
+
+<section class="alert-output">
+    <h3>Last alert</h3>
+    <p>@(_lastAlert ?? "(none yet)")</p>
+</section>
+
+@code {
+    private string? _lastAlert;
+
+    private void HandleAlert(string msg) => _lastAlert = msg;
+}

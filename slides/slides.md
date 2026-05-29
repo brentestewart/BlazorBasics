@@ -15,6 +15,32 @@ transition: slide-left
 mdc: true
 ---
 
+# Welcome
+
+## CommunityDays KC 2026
+
+<!--
+Generic opener. Greet the room while people settle in. Then click forward — the first content slide is the Chevy Blazer gag, so the title hasn't been revealed yet.
+-->
+
+---
+
+# Blazer Fundamentals: Care and maintenance of your Chevy Blazer
+
+<div class="flex justify-center mt-6">
+  <img src="/chevy-blazer.png" class="rounded shadow-lg" style="max-height: 42vh;" />
+</div>
+
+<!--
+Opening gag — let the room sit with the picture for a beat. They'll wonder if they walked into the wrong room.
+
+Then click forward to the title reveal: "actually we're talking about Blazor, not Blazer." The longer you hold the confusion, the better the pivot lands.
+-->
+
+---
+layout: cover
+---
+
 # Blazor Fundamentals
 
 ## Getting Started with Modern .NET Web Development
@@ -22,7 +48,7 @@ mdc: true
 Brent Stewart — Alien Arc Technologies
 
 <!--
-Title slide. Stay here while the room settles.
+The pivot. After the Chevy gag, this is the "actually we're talking about Blazor" reveal. Brief beat, then move on to introduce yourself.
 -->
 
 ---
@@ -54,6 +80,40 @@ I co-founded Alien Arc Technologies where I get to use my experience to deliver 
 
 ---
 
+# What is Blazor?
+
+<div class="flex flex-col items-center justify-center text-center" style="min-height: 40vh;">
+
+<div v-click="1" class="text-5xl font-semibold mb-4">
+  Browser <span class="opacity-50 mx-4">+</span> Razor
+</div>
+
+<div v-click="2" class="text-4xl opacity-70 my-2">
+  =
+</div>
+
+<div v-click="2" class="text-7xl font-bold mb-8">
+  Blazor
+</div>
+
+<div v-click="3" class="text-xl max-w-3xl opacity-90 mt-4">
+  A component-based web framework from Microsoft. Write your UI in C# instead of JavaScript, and pick where each component runs — server, browser via WebAssembly, or static HTML.
+</div>
+
+</div>
+
+<!--
+Etymology reveal — Browser + Razor = Blazor. Walk the clicks slowly so the room makes the connection.
+
+Razor is Microsoft's HTML + C# templating engine, around since 2010 in ASP.NET MVC. "Blazor" is just Razor running in the browser (and now everywhere else too).
+
+After the reveal, land the substance line: same C# component, multiple runtime locations. The next slide breaks down those locations.
+
+Calibrate to the room — skim fast if many hands go up on "I already use Blazor."
+-->
+
+---
+
 # The four render modes
 
 | Mode | What it is |
@@ -77,22 +137,67 @@ Most real apps pick one mode and live there. The demo shows all four because the
 
 ---
 
-# `[StreamRendering]`
+# Prerendering
 
-Static SSR doesn't have to mean slow blocking.
+Interactive modes don't render once &mdash; they render **twice**.
 
-```csharp
-@page "/dashboard"
-@attribute [StreamRendering]
+| Phase | Where | What it produces |
+|---|---|---|
+| **1. Prerender** | Server, during the HTTP response | HTML for fast first paint |
+| **2. Interactive** | Browser (WASM) or SignalR circuit (Server) | The live, responsive UI |
 
-<h1>Dashboard</h1>
-<DataPanel />
-```
+<br>
 
-The initial HTML streams immediately; async work patches in once ready.
+The component goes through `OnInitializedAsync` **once on the server, then again on the client.**
+That boundary is where most "huh, that's weird" Blazor moments live &mdash; state lost,
+data refetched, content flickering as the takeover happens.
 
 <!--
-30-second beat. Strengthens the render-mode story — Static SSR is more capable than the "click does nothing" demo suggested.
+The /wasm demo you just saw is this in action — server-rendered HTML appears
+immediately, then WASM bootstraps and the component re-initializes. /wasm-no-prerender
+turns the first phase off so you see the blank-then-pop alternative.
+
+Don't dwell on the problems here. Just name the boundary. Later in the deck,
+"Prerender superpowers" introduces [StreamRendering] and [PersistentState] —
+the two attributes that fix the most painful symptoms.
+-->
+
+---
+
+# Project structure
+
+`dotnet new blazor` produces a two-project solution.
+
+```
+MyApp.sln
+├── MyApp.Web/              ← server (ASP.NET Core host)
+│   ├── Components/
+│   │   ├── App.razor       ← <html> shell
+│   │   ├── Routes.razor    ← <Router>
+│   │   └── Pages/          ← server-only pages
+│   └── Program.cs
+│
+└── MyApp.Web.Client/       ← browser (WebAssembly)
+    ├── Pages/              ← can run server AND/OR client
+    ├── Components/
+    └── Program.cs
+```
+
+**Rule of thumb:** components in `.Web.Client` can run *anywhere* &mdash; server prerender,
+WebAssembly, or both. Components in `.Web` are server-only.
+
+<!--
+Open the solution in the IDE and walk the two projects briefly. The .Web project
+is the ASP.NET Core host — it boots Kestrel, configures Razor components, and ships
+the WASM bundle. The .Web.Client project is the WebAssembly side — anything in here
+gets compiled to WASM and downloaded by the browser.
+
+Why does location matter? Because a component's @rendermode determines where it
+runs. A page with @rendermode InteractiveWebAssembly must live in .Web.Client
+because the server can't ship code it doesn't have a reference to the browser side of.
+
+The .Web project references .Web.Client, so server pages can use client components.
+The reverse isn't true — client components can't pull in server-only code.
 -->
 
 ---
@@ -101,9 +206,10 @@ layout: section
 
 # Components
 
-<div class="absolute left-0 right-0 bottom-0 top-24 flex items-center justify-center">
-  <div class="text-6xl font-bold text-center">
-    The Lego blocks of Blazor
+<div class="absolute left-0 right-0 bottom-0 top-24 flex flex-col items-center justify-center gap-8">
+  <img src="/lego-blocks.png" style="max-height: 36vh;" />
+  <div class="text-5xl font-bold text-center">
+    The Lego bricks of Blazor
   </div>
 </div>
 
@@ -122,6 +228,8 @@ MyCustomComponent.razor.css      # optional scoped styles
 - Scoped CSS is automatic — selectors only match this component
 - Use `::deep` to pierce into descendant component markup
 
+<div class="text-sm opacity-70 font-mono mb-1">Widget.razor.css</div>
+
 ```css
 .row { padding: 0.5rem; }       /* this component only */
 .row ::deep a { color: cyan; }  /* descendants too */
@@ -135,6 +243,8 @@ Open Widget.razor + Widget.razor.css side-by-side in the IDE here.
 
 # Parameters
 
+<div class="text-sm opacity-70 font-mono mb-1">Widget.razor</div>
+
 ```csharp
 [Parameter] public string Title { get; set; } = "";
 [Parameter] public WidgetData? Data { get; set; }
@@ -145,10 +255,14 @@ Open Widget.razor + Widget.razor.css side-by-side in the IDE here.
 
 **Catch-all — forward any unmatched attribute:**
 
+<div class="text-sm opacity-70 font-mono mb-1">Widget.razor</div>
+
 ```csharp
 [Parameter(CaptureUnmatchedValues = true)]
 public Dictionary<string, object>? Attributes { get; set; }
 ```
+
+<div class="text-sm opacity-70 font-mono mb-1">Widget.razor</div>
 
 ```razor
 <button @attributes="Attributes">Click</button>
@@ -162,17 +276,16 @@ Catch-all is how component-library authors splat `class`, `id`, ARIA attrs onto 
 
 # ChildContent / RenderFragment
 
-```razor
-<WidgetCard Title="Sales">
-  <p>$42,580 this week</p>
-</WidgetCard>
-```
+**Definition**
+
+<div class="text-sm opacity-70 font-mono mb-1">WidgetCard.razor</div>
 
 ```csharp
-// WidgetCard.razor
 [Parameter] public string Title { get; set; } = "";
 [Parameter] public RenderFragment? ChildContent { get; set; }
 ```
+
+<div class="text-sm opacity-70 font-mono mb-1">WidgetCard.razor</div>
 
 ```razor
 <div class="card">
@@ -181,60 +294,48 @@ Catch-all is how component-library authors splat `class`, `id`, ARIA attrs onto 
 </div>
 ```
 
-<!--
-Composition primitive. Anything inside the tags becomes `ChildContent`.
--->
+**Usage**
 
----
-
-# Data binding
+<div class="text-sm opacity-70 font-mono mb-1">Dashboard.razor</div>
 
 ```razor
-<input @bind="prompt" />                                  <!-- onchange -->
-<input @bind="prompt" @bind:event="oninput" />            <!-- per keystroke -->
-<input @bind="prompt" @bind:event="oninput"
-       @bind:after="OnPromptChanged" />                   <!-- side-effect -->
+<WidgetCard Title="Sales">
+  <p>$42,580 this week</p>
+</WidgetCard>
 ```
 
-`@bind` is sugar for `value="@prompt"` + `@onchange="..."`.
-
 <!--
-Show the binding running live on /wasm. Type into the prompt input; watch state update.
--->
-
----
-
-# Component lifecycle
-
-| Hook | Fires when |
-|---|---|
-| `SetParametersAsync` | Parameters arriving from parent |
-| `OnInitialized(Async)` | Once, when component is created |
-| `OnParametersSet(Async)` | After parameters are set (initial + subsequent) |
-| `OnAfterRender(Async)` | After the DOM is updated; `firstRender: bool` |
-| `StateHasChanged()` | Manually trigger a re-render (rarely needed) |
-
-<!--
-Brief in-component demo: log each hook firing for first load, parameter change, and local state change.
-
-Mention: most components only need OnInitializedAsync (for fetching) and rely on Blazor's automatic re-renders.
+Composition primitive. Anything inside the tags becomes `ChildContent`.
 -->
 
 ---
 layout: section
 ---
 
-# Behavior
+# Interactivity
 
 <div class="absolute left-0 right-0 bottom-0 top-24 flex items-center justify-center">
-  <div class="text-6xl font-bold text-center">
-    Events, routing, dependency injection
+  <div class="flex flex-col gap-5">
+    <div class="flex items-baseline gap-8">
+      <span class="text-6xl font-bold opacity-25 tabular-nums">01</span>
+      <span class="text-5xl font-semibold">Events</span>
+    </div>
+    <div class="flex items-baseline gap-8">
+      <span class="text-6xl font-bold opacity-25 tabular-nums">02</span>
+      <span class="text-5xl font-semibold">Data binding</span>
+    </div>
+    <div class="flex items-baseline gap-8">
+      <span class="text-6xl font-bold opacity-25 tabular-nums">03</span>
+      <span class="text-5xl font-semibold">Lifecycle</span>
+    </div>
   </div>
 </div>
 
 ---
 
 # Events
+
+<div class="text-sm opacity-70 font-mono mb-1">Widget.razor</div>
 
 ```razor
 <button @onclick="Refresh">Refresh</button>
@@ -246,10 +347,13 @@ layout: section
 
 **EventCallback — pass a handler up to a child:**
 
+<div class="text-sm opacity-70 font-mono mb-1">Widget.razor</div>
+
 ```csharp
-// Widget.razor
 [Parameter] public EventCallback<WidgetData> OnRefresh { get; set; }
 ```
+
+<div class="text-sm opacity-70 font-mono mb-1">Widget.razor</div>
 
 ```razor
 <button @onclick="() => OnRefresh.InvokeAsync(Data)">Refresh</button>
@@ -261,7 +365,76 @@ EventCallback is preferred over Action for cross-component events — it integra
 
 ---
 
+# Data binding
+
+<div class="text-sm opacity-70 font-mono mb-1">PromptInput.razor</div>
+
+```razor
+<input @bind="prompt" />                                  <!-- onchange -->
+<input @bind="prompt" @bind:event="oninput" />            <!-- per keystroke -->
+<input @bind="prompt" @bind:event="oninput"
+       @bind:after="OnPromptChanged" />                   <!-- side-effect -->
+```
+
+`@bind` is syntactic sugar for `value="@prompt"` + `@onchange="..."`.
+
+<!--
+Show the binding running live on /wasm. Type into the prompt input; watch state update.
+-->
+
+---
+
+# Component lifecycle
+
+| Hook | Fires when |
+|---|---|
+| `SetParametersAsync(ParameterView parameters)` | Parameters arriving from parent |
+| `OnInitialized()`<br>`OnInitializedAsync()` | Once, when component is created |
+| `OnParametersSet()`<br>`OnParametersSetAsync()` | After parameters are set (initial + subsequent) |
+| `OnAfterRender(bool firstRender)`<br>`OnAfterRenderAsync(bool firstRender)` | After the DOM is updated |
+
+<br>
+
+`StateHasChanged()` &mdash; manually trigger a re-render (rarely needed).
+
+<!--
+Brief in-component demo: log each hook firing for first load, parameter change, and local state change.
+
+Mention: most components only need OnInitializedAsync (for fetching) and rely on Blazor's automatic re-renders.
+-->
+
+---
+layout: section
+---
+
+# Composing an app
+
+<div class="absolute left-0 right-0 bottom-0 top-24 flex items-center justify-center">
+  <div class="flex flex-col gap-5">
+    <div class="flex items-baseline gap-8">
+      <span class="text-6xl font-bold opacity-25 tabular-nums">01</span>
+      <span class="text-5xl font-semibold">Control flow</span>
+    </div>
+    <div class="flex items-baseline gap-8">
+      <span class="text-6xl font-bold opacity-25 tabular-nums">02</span>
+      <span class="text-5xl font-semibold">Routing</span>
+    </div>
+    <div class="flex items-baseline gap-8">
+      <span class="text-6xl font-bold opacity-25 tabular-nums">03</span>
+      <span class="text-5xl font-semibold">Dependency injection</span>
+    </div>
+    <div class="flex items-baseline gap-8">
+      <span class="text-6xl font-bold opacity-25 tabular-nums">04</span>
+      <span class="text-5xl font-semibold">Cascading values</span>
+    </div>
+  </div>
+</div>
+
+---
+
 # Control flow
+
+<div class="text-sm opacity-70 font-mono mb-1">WidgetList.razor</div>
 
 ```razor
 @if (Widgets is null)
@@ -285,42 +458,33 @@ Razor is just C# inside HTML. `@if`, `@foreach`, `@switch`, all work.
 
 # Routing
 
-```razor
-@page "/comparison/{id:int}"
+<div class="text-sm opacity-70 font-mono mb-1">User.razor</div>
 
-@code {
-    [Parameter] public int Id { get; set; }
-}
+```razor
+@page "/user/{id:int?}"
+@page "/catch/{*path}"
 ```
 
 - One or more `@page` directives per component
-- Route parameters use `{name}` syntax
-- Constraints use `{name:type}` syntax — type-checked at route time
-- Optional with `?` — `{id:int?}`
-- Catch-all with `*` — `{*path}`
+- Route parameters: `{name}`, optional `{name?}`, catch-all `{*name}`
+- Constraints attach with `:type` — type-checked at route time
+
+| `bool` | `datetime` | `decimal` | `double` | `float` | `guid` | `int` | `long` | `nonfile` |
+|---|---|---|---|---|---|---|---|---|
+
+Blazor's router only supports these nine type constraints — MVC's `alpha`, `regex`, `min`, `max`, `range`, `length` are **not** available.
 
 <!--
 Open ComparisonDetail.razor; navigate to /comparison/3.
+
+The constraint list is shorter than MVC's on purpose — Blazor's router is stricter. `:nonfile` is the surprise one: stick it on optional/catch-all parameters to stop them from gobbling up `app.styles.css` or `favicon.ico`.
 -->
 
 ---
 
-# Route constraints
-
-| Constraint | Example |
-|---|---|
-| `int`, `long`, `float`, `double`, `decimal`, `bool` | `{id:int}` |
-| `datetime`, `guid` | `{when:datetime}` |
-| `alpha` | `{slug:alpha}` |
-| `regex(pattern)` | `{code:regex(^\\d{{5}}$)}` |
-| `min(n)`, `max(n)`, `range(a,b)` | `{n:min(1)}` |
-| `minlength(n)`, `maxlength(n)`, `length(n)` | `{slug:minlength(3)}` |
-
-Reference slide — photograph it and keep moving.
-
----
-
 # Query string parameters
+
+<div class="text-sm opacity-70 font-mono mb-1">Dashboard.razor</div>
 
 ```csharp
 @page "/dashboard"
@@ -340,9 +504,13 @@ Reference slide — photograph it and keep moving.
 
 # Navigation
 
+<div class="text-sm opacity-70 font-mono mb-1">NavMenu.razor</div>
+
 ```razor
 <NavLink href="/wasm" Match="NavLinkMatch.All">WASM</NavLink>
 ```
+
+<div class="text-sm opacity-70 font-mono mb-1">Dashboard.razor</div>
 
 ```csharp
 @inject NavigationManager Nav
@@ -353,6 +521,8 @@ void Refresh() => Nav.Refresh();
 
 **404s — wire a `NotFoundPage` on the Router:**
 
+<div class="text-sm opacity-70 font-mono mb-1">Routes.razor</div>
+
 ```razor
 <Router AppAssembly="..." NotFoundPage="typeof(NotFound)" />
 ```
@@ -361,10 +531,14 @@ void Refresh() => Nav.Refresh();
 
 # Dependency injection
 
+<div class="text-sm opacity-70 font-mono mb-1">Dashboard.razor</div>
+
 ```razor
 @inject IDashboardService Dashboard
 @inject HttpClient Http
 ```
+
+<div class="text-sm opacity-70 font-mono mb-1">Dashboard.razor.cs</div>
 
 ```csharp
 [Inject] public IDashboardService Dashboard { get; set; } = default!;
@@ -382,20 +556,114 @@ Worth a sentence: "scoped" means something different on Server (per SignalR circ
 
 ---
 
-# JavaScript interop
+# Cascading values
 
-```csharp
-@inject IJSRuntime JS
+Pass a value once at the top; any descendant pulls it out — no matter how deep, no parameter passing in between.
 
-async Task LogIt()
-{
-    await JS.InvokeVoidAsync("console.log", "Hello from C#");
-}
+<div class="text-sm opacity-70 font-mono mb-1">MainLayout.razor</div>
 
-var width = await JS.InvokeAsync<int>("getViewportWidth");
+```razor
+@* Provider — anywhere up the tree *@
+<CascadingValue Value="theme">
+    <ThemedCard>
+        <ThemedHeader>...</ThemedHeader>
+        <ThemedButton>...</ThemedButton>
+    </ThemedCard>
+</CascadingValue>
 ```
 
-Use it when you need the browser; avoid it when you don't.
+<div class="text-sm opacity-70 font-mono mb-1">ThemedButton.razor</div>
+
+```csharp
+// Consumer — any depth below, no Theme parameter from the parent
+[CascadingParameter] public Theme Theme { get; set; }
+```
+
+<br>
+
+Multiple cascades of the same type? Distinguish them with `[CascadingParameter(Name = "...")]`.
+
+<!--
+Open /cascading. Toggle light ↔ dark. Every nested component re-renders — none of the intermediate components declares a Theme parameter; they pick it out of the ambient cascade.
+
+Real-world uses: theming, current-user context, feature flags, any "ambient" thing a whole subtree cares about.
+
+If the cascaded value never changes, mark `IsFixed="true"` on `<CascadingValue>` for a perf win — Blazor skips the re-render notification dance.
+-->
+
+---
+layout: section
+---
+
+# Prerender superpowers
+
+<div class="absolute left-0 right-0 bottom-0 top-24 flex items-center justify-center">
+  <div class="text-6xl font-bold text-center">
+    Two attributes that fix the prerender pipeline's biggest problems
+  </div>
+</div>
+
+---
+
+# `[StreamRendering]`
+
+Static SSR doesn't have to mean slow blocking.
+
+<div class="text-sm opacity-70 font-mono mb-1">Dashboard.razor</div>
+
+```csharp
+@page "/dashboard"
+@attribute [StreamRendering]
+
+<h1>Dashboard</h1>
+<DataPanel />
+```
+
+The initial HTML streams immediately; async work patches in once ready.
+
+<!--
+Fixes the "blank tab for 3 seconds" problem. Server flushes the initial HTML right away, then patches in each section as its async work completes.
+
+Demo: /stream vs /stream-blocking — same component, mode banner makes the difference obvious.
+-->
+
+---
+
+# `[PersistentState]`
+
+**Before — fetched value flickers across prerender → interactive boundary:**
+
+<div class="text-sm opacity-70 font-mono mb-1">Dashboard.razor</div>
+
+```csharp
+[Inject] public IDashboardService Dashboard { get; set; } = default!;
+public List<WidgetData>? Items { get; set; }
+
+protected override async Task OnInitializedAsync()
+{
+    Items = await Dashboard.GetWidgetsAsync();
+}
+```
+
+**After — value persists, no refetch on hydration:**
+
+<div class="text-sm opacity-70 font-mono mb-1">Dashboard.razor</div>
+
+```csharp
+[PersistentState]
+public List<WidgetData>? Items { get; set; }
+
+protected override async Task OnInitializedAsync()
+{
+    Items ??= await Dashboard.GetWidgetsAsync();
+}
+```
+
+<!--
+This is .NET 10. Replaces the PersistentComponentState dance from .NET 8/9.
+
+Live moment: toggle the attribute on/off; show the network tab refetching when off.
+-->
 
 ---
 layout: section
@@ -404,14 +672,27 @@ layout: section
 # Forms
 
 <div class="absolute left-0 right-0 bottom-0 top-24 flex items-center justify-center">
-  <div class="text-6xl font-bold text-center">
-    EditForm, validation, source-gen
+  <div class="flex flex-col gap-5">
+    <div class="flex items-baseline gap-8">
+      <span class="text-6xl font-bold opacity-25 tabular-nums">01</span>
+      <span class="text-5xl font-semibold">EditForm</span>
+    </div>
+    <div class="flex items-baseline gap-8">
+      <span class="text-6xl font-bold opacity-25 tabular-nums">02</span>
+      <span class="text-5xl font-semibold">Validation</span>
+    </div>
+    <div class="flex items-baseline gap-8">
+      <span class="text-6xl font-bold opacity-25 tabular-nums">03</span>
+      <span class="text-5xl font-semibold">Source-gen (.NET 10)</span>
+    </div>
   </div>
 </div>
 
 ---
 
 # EditForm anatomy
+
+<div class="text-sm opacity-70 font-mono mb-1">Submit.razor</div>
 
 ```razor
 <EditForm Model="Model" OnValidSubmit="Submit">
@@ -437,13 +718,15 @@ layout: section
 
 # Source-gen validation (.NET 10)
 
+<div class="text-sm opacity-70 font-mono mb-1">Program.cs</div>
+
 ```csharp
-// Program.cs
 builder.Services.AddValidation();
 ```
 
+<div class="text-sm opacity-70 font-mono mb-1">Comparison.cs &nbsp;<span class="opacity-70">← .cs, not .razor</span></div>
+
 ```csharp
-// Comparison.cs   ← .cs file, NOT .razor
 [ValidatableType]
 public class Comparison
 {
@@ -467,53 +750,65 @@ Trigger a nested error on stage to show traversal working.
 layout: section
 ---
 
-# Beyond the basics
+# Reaching outside Blazor
 
 <div class="absolute left-0 right-0 bottom-0 top-24 flex items-center justify-center">
   <div class="text-6xl font-bold text-center">
-    Persistent state, Auto mode, hot reload
+    When you need the browser
   </div>
 </div>
 
 ---
 
-# `[PersistentState]`
+# JavaScript interop
 
-**Before — fetched value flickers across prerender → interactive boundary:**
-
-```csharp
-[Inject] public IDashboardService Dashboard { get; set; } = default!;
-public List<WidgetData>? Items { get; set; }
-
-protected override async Task OnInitializedAsync()
-{
-    Items = await Dashboard.GetWidgetsAsync();
-}
-```
-
-**After — value persists, no refetch on hydration:**
+<div class="text-sm opacity-70 font-mono mb-1">JsInterop.razor</div>
 
 ```csharp
-[PersistentState]
-public List<WidgetData>? Items { get; set; }
+@inject IJSRuntime JS
 
-protected override async Task OnInitializedAsync()
+async Task LogIt()
 {
-    Items ??= await Dashboard.GetWidgetsAsync();
+    await JS.InvokeVoidAsync("console.log", "Hello from C#");
 }
+
+var width = await JS.InvokeAsync<int>("getViewportWidth");
 ```
+
+Use it when you need the browser; avoid it when you don't.
 
 <!--
-This is .NET 10. Replaces the PersistentComponentState dance from .NET 8/9.
-
-Live moment: toggle the attribute on/off; show the network tab refetching when off.
+Demo: /js-interop shows both directions — C# → JS (clipboard) and JS → C# (window resize listener calling [JSInvokable] method).
 -->
+
+---
+layout: section
+---
+
+# Shipping
+
+<div class="absolute left-0 right-0 bottom-0 top-24 flex items-center justify-center">
+  <div class="flex flex-col gap-5">
+    <div class="flex items-baseline gap-8">
+      <span class="text-6xl font-bold opacity-25 tabular-nums">01</span>
+      <span class="text-5xl font-semibold">Dev experience</span>
+    </div>
+    <div class="flex items-baseline gap-8">
+      <span class="text-6xl font-bold opacity-25 tabular-nums">02</span>
+      <span class="text-5xl font-semibold">Project types</span>
+    </div>
+    <div class="flex items-baseline gap-8">
+      <span class="text-6xl font-bold opacity-25 tabular-nums">03</span>
+      <span class="text-5xl font-semibold">When to pick which</span>
+    </div>
+  </div>
+</div>
 
 ---
 
 # WASM Hot Reload + a lighter runtime
 
-- **WASM Hot Reload (.NET 10)** — edit a `.razor` file with `/wasm` open, browser updates without a refresh. This didn't work in .NET 9.
+- **WASM Hot Reload (.NET 10)** — edit a `.razor` file with `/wasm` open, browser auto updates. This didn't work in .NET 9.
 - **`blazor.web.js` is 76% smaller** — the script that bootstraps every Blazor Web App page is now a fraction of its prior size.
 
 <br>
@@ -522,34 +817,40 @@ The perception that "WASM is heavy" is getting less true every release.
 
 ---
 
+# Three ways to ship Blazor
+
+| Project type | What it gives you |
+|---|---|
+| **Blazor Web App** | What we built today — Server + WebAssembly render modes, per-component choice |
+| **Standalone WebAssembly** | Pure WASM, static hosting, PWA-able. No server backend required. |
+| **Blazor Hybrid** | Render Blazor components inside .NET MAUI, WPF, or WinForms — desktop and mobile apps in C# |
+
+<br>
+
+Render modes are a choice *within* Blazor Web App. The other two project types live on their own tracks.
+
+<!--
+Five-second tour, not a deep dive. The takeaway: Blazor isn't just web — Hybrid puts your component code inside a desktop or mobile app shell.
+
+Standalone WASM is closer to the React/Vue/Angular deployment story — build static assets, drop on a CDN, no backend needed.
+
+Most .NET devs find out Hybrid exists years too late. Plant the seed.
+-->
+
+---
+
 # When to pick which
 
 | You want… | Reach for |
 |---|---|
-| Lowest-friction interactive page, no client work | **InteractiveServer** |
-| Rich offline-tolerant client UI, no SignalR | **InteractiveWebAssembly** |
-| Best-of-both, server-rendered first paint | **InteractiveAuto** |
-| Form-driven page, no per-keystroke interactivity | **Static SSR** |
-| True offline, installable PWA, static-only hosting | **Standalone WASM** template (different project type) |
+| Server-rendered, low client work | **InteractiveServer** |
+| Rich client UI, no SignalR | **InteractiveWebAssembly** |
+| Server first, WASM later | **InteractiveAuto** |
+| Form-only, no live interactivity | **Static SSR** |
+| Installable PWA, static hosting | **Standalone WASM** (separate template) |
+| Native desktop / mobile shell | **Blazor Hybrid** (.NET MAUI / WPF / WinForms) |
 
 Most apps pick one and live there. Pick deliberately.
-
----
-
-# Miscellaneous Blazor
-
-- `<PageTitle>` — set the browser tab title from inside a component
-- `<HeadContent>` — inject `<meta>`, `<link>`, etc. into `<head>`
-- **QuickGrid** — Microsoft-supplied data grid component
-- **Component libraries** — MudBlazor, Radzen, FluentUI Blazor, Telerik, Syncfusion
-- **JS interop deeper APIs** — `IJSObjectReference`, isolated modules
-
-```razor
-<PageTitle>Dashboard — Blazor Basics</PageTitle>
-<HeadContent>
-    <meta name="description" content="Blazor dashboard demo" />
-</HeadContent>
-```
 
 ---
 layout: center

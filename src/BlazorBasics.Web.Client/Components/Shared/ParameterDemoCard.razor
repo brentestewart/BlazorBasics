@@ -1,0 +1,17 @@
+@* Catch-all attributes splat onto the root div. *@
+<div @attributes="ExtraAttrs" class="param-card">
+    <h4>@Title</h4>
+    <p class="price">$@Price.ToString("0.00")</p>
+    <button class="alert-btn" @onclick="@(() => OnAlert.InvokeAsync($"You clicked {Title}"))">
+        Click me
+    </button>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter] public decimal Price { get; set; }
+    [Parameter] public EventCallback<string> OnAlert { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? ExtraAttrs { get; set; }
+}

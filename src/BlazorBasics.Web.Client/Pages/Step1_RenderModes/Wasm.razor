@@ -4,3 +4,15 @@
 <PageTitle>WebAssembly</PageTitle>
 
 <RenderModeBadge />
+
+<PageFlow Phases="@phases" />
+
+@code {
+    private readonly PageFlow.Phase[] phases =
+    {
+        new("HTTP request", "Browser navigates to /wasm.", "request"),
+        new("Prerender on server", "Razor renders initial HTML — the flash of content before WASM boots.", "ssr"),
+        new("WASM bundle loads", "Browser downloads (or pulls from cache) the .wasm runtime + app DLLs.", "wasm"),
+        new("InteractiveWebAssembly", "Component re-initializes and runs entirely in the browser.", "wasm"),
+    };
+}

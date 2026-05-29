@@ -1,7 +1,52 @@
-﻿@page "/"
+@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Blazor Fundamentals &mdash; Component Lab</PageTitle>
 
-<h1>Hello, world!</h1>
+<section class="hero">
+    <h1>Component Lab</h1>
+    <p class="lede">
+        A live, navigable companion to the <strong>Blazor Fundamentals</strong> talk.
+        Every item in the sidebar is a small, focused demo of one concept from the deck.
+        Poke around &mdash; and hit "View source" on anything that surprises you.
+    </p>
+</section>
 
-Welcome to your new app.
+<section class="card-grid">
+    <a class="step-card" href="static">
+        <span class="step-num">Step 1</span>
+        <h3>Render modes</h3>
+        <p>The same component in four runtime locations &mdash; Static SSR, InteractiveServer, InteractiveWebAssembly, and InteractiveAuto &mdash; side by side.</p>
+    </a>
+
+    <a class="step-card" href="parameters">
+        <span class="step-num">Step 2</span>
+        <h3>Components</h3>
+        <p>Parameters and catch-all attributes, ChildContent slots, two-way binding, events, the lifecycle log, routing constraints, and dependency injection.</p>
+    </a>
+
+    <a class="step-card" href="stream">
+        <span class="step-num">Step 3</span>
+        <h3>Prerender + forms</h3>
+        <p><code>[StreamRendering]</code> in action, plus an <code>EditForm</code> with source-gen validation and the post-redirect-get pattern.</p>
+    </a>
+
+    <a class="step-card" href="product/1/with-persistence">
+        <span class="step-num">Step 4</span>
+        <h3>Persistence &amp; cascading</h3>
+        <p><code>[PersistentState]</code> across the prerender &rarr; interactive boundary, and a theme demo using ambient <code>CascadingValue</code>.</p>
+    </a>
+
+    <a class="step-card" href="js-interop">
+        <span class="step-num">Step 5</span>
+        <h3>JavaScript interop</h3>
+        <p>C# &rarr; JS (clipboard) and JS &rarr; C# (window resize listener), both routed through <code>IJSObjectReference</code>.</p>
+    </a>
+</section>
+
+<section class="footnote">
+    <p>
+        Built for <strong>CommunityDays KC 2026</strong> by Brent Stewart.
+        Slides + source on
+        <a href="https://github.com/brentestewart/BlazorBasics" target="_blank" rel="noopener">GitHub</a>.
+    </p>
+</section>

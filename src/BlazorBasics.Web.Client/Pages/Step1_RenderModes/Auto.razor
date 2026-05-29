@@ -4,3 +4,16 @@
 <PageTitle>Auto</PageTitle>
 
 <RenderModeBadge />
+
+<PageFlow Phases="@phases" />
+
+@code {
+    private readonly PageFlow.Phase[] phases =
+    {
+        new("HTTP request", "Browser navigates to /auto.", "request"),
+        new("Prerender on server", "Razor renders initial HTML for fast first paint.", "ssr"),
+        new("InteractiveServer (first visit)", "SignalR opens immediately so the page is interactive while the WASM bundle is still downloading.", "signalr"),
+        new("WASM cached in background", "Browser caches the WASM bundle silently. Nothing changes for the user on this visit.", "cache"),
+        new("InteractiveWebAssembly (next visit)", "On the next navigation here, the cached WASM bundle wins and the component runs in the browser.", "wasm"),
+    };
+}

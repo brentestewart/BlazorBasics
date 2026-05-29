@@ -1,0 +1,59 @@
+@page "/child-content"
+@rendermode InteractiveWebAssembly
+@using BlazorBasics.Web.Client.Components.Shared
+
+<PageTitle>ChildContent / RenderFragment</PageTitle>
+
+<h1>ChildContent / RenderFragment</h1>
+
+<section class="cc-section">
+    <h2>1. Single <code>ChildContent</code> slot</h2>
+    <p class="hint">Anything between the opening and closing tag becomes <code>ChildContent</code>.</p>
+
+    <Panel Title="Daily report">
+        <p>Revenue today: <strong>$42,580</strong></p>
+        <p>New customers: <strong>17</strong></p>
+    </Panel>
+</section>
+
+<section class="cc-section">
+    <h2>2. Named <code>RenderFragment</code> slots</h2>
+    <p class="hint">Each named property maps to a tag inside the component.</p>
+
+    <SlottedCard>
+        <Header>
+            <h4>Confirm deletion</h4>
+        </Header>
+        <Body>
+            <p>This action cannot be undone. Continue?</p>
+        </Body>
+        <Footer>
+            <button>Cancel</button>
+            <button class="primary">Delete</button>
+        </Footer>
+    </SlottedCard>
+</section>
+
+<section class="cc-section">
+    <h2>3. <code>RenderFragment&lt;T&gt;</code> &mdash; templated lists</h2>
+    <p class="hint">
+        The parent supplies a template; the child invokes it once per item, passing the item in.
+    </p>
+
+    <ItemList Items="_widgets">
+        <ItemTemplate Context="widget">
+            <strong>@widget.Name</strong> &mdash; <span class="price">$@widget.Price.ToString("0.00")</span>
+        </ItemTemplate>
+    </ItemList>
+</section>
+
+@code {
+    private record Widget(string Name, decimal Price);
+
+    private readonly Widget[] _widgets =
+    {
+        new("Acme Widget", 19.99m),
+        new("Super Widget", 29.50m),
+        new("Mega Widget", 39.95m),
+    };
+}

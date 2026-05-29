@@ -1,0 +1,12 @@
+@* Multiple named RenderFragment slots. *@
+<div class="slotted">
+    <header class="slotted-header">@Header</header>
+    <main class="slotted-body">@Body</main>
+    <footer class="slotted-footer">@Footer</footer>
+</div>
+
+@code {
+    [Parameter] public RenderFragment? Header { get; set; }
+    [Parameter] public RenderFragment? Body { get; set; }
+    [Parameter] public RenderFragment? Footer { get; set; }
+}

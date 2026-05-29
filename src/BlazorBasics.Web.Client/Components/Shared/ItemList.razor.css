@@ -1,0 +1,19 @@
+.item-list {
+    max-width: 28rem;
+    margin: 0.5rem 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid #d0d7de;
+    border-radius: 0.5rem;
+    background: white;
+    overflow: hidden;
+}
+
+.item-list li {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid #f0f3f6;
+}
+
+.item-list li:last-child {
+    border-bottom: none;
+}

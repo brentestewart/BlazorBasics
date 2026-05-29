@@ -1,0 +1,28 @@
+@* Visual "what to expect" for the Step 1 render-mode demos. *@
+
+<section class="page-flow">
+    <h2 class="pf-title">How this page renders</h2>
+
+    <ol class="pf-list">
+        @for (var i = 0; i < Phases.Length; i++)
+        {
+            var phase = Phases[i];
+            <li class="pf-card kind-@phase.Kind">
+                <span class="pf-num">@(i + 1)</span>
+                <div class="pf-name">@phase.Name</div>
+                <div class="pf-desc">@phase.Description</div>
+            </li>
+
+            if (i < Phases.Length - 1)
+            {
+                <li class="pf-arrow" aria-hidden="true">&rarr;</li>
+            }
+        }
+    </ol>
+</section>
+
+@code {
+    public record Phase(string Name, string Description, string Kind = "neutral");
+
+    [Parameter] public Phase[] Phases { get; set; } = Array.Empty<Phase>();
+}

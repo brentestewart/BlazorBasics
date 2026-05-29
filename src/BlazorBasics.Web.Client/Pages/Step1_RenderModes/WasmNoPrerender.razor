@@ -4,3 +4,15 @@
 <PageTitle>WASM (no prerender)</PageTitle>
 
 <RenderModeBadge />
+
+<PageFlow Phases="@phases" />
+
+@code {
+    private readonly PageFlow.Phase[] phases =
+    {
+        new("HTTP request", "Browser navigates to /wasm-no-prerender.", "request"),
+        new("Empty shell HTML", "Server returns the layout with no component HTML — prerender turned off.", "static"),
+        new("WASM bundle loads", "Browser fetches and boots the WebAssembly runtime — you see blank until this finishes.", "wasm"),
+        new("InteractiveWebAssembly", "Component renders for the first time, in the browser.", "wasm"),
+    };
+}

@@ -1,10 +1,17 @@
 @page "/lifecycle"
+@page "/lifecycle/{filter}"
 @rendermode InteractiveWebAssembly
 @implements IDisposable
 
 <PageTitle>Lifecycle</PageTitle>
 
 <h1>Component lifecycle</h1>
+
+<nav class="lc-filter">
+    <NavLink class="lc-filter-link" href="/lifecycle" Match="NavLinkMatch.All">All</NavLink>
+    <NavLink class="lc-filter-link" href="/lifecycle/sync">Sync only</NavLink>
+    <NavLink class="lc-filter-link" href="/lifecycle/async">Async only</NavLink>
+</nav>
 
 <button class="lc-btn" @onclick="Rerender">Click to trigger a re-render (@clicks)</button>
 
@@ -19,17 +26,32 @@
 </ol>
 
 @code {
+    [Parameter] public string? Filter { get; set; }
+
     private readonly List<LogEntry> log = new();
     private DateTime start = DateTime.Now;
     private int clicks;
     private bool capturing = true;
+    private string? trackedFilter;
 
     private record LogEntry(string Name, int Ms);
 
-    private void Add(string name)
+    private void Add(string name, bool isAsync = false)
     {
-        if (capturing)
-            log.Add(new LogEntry(name, (int)(DateTime.Now - start).TotalMilliseconds));
+        // If the route parameter changed via navigation, reset for a fresh capture.
+        if (trackedFilter is not null && Filter != trackedFilter)
+        {
+            log.Clear();
+            start = DateTime.Now;
+            capturing = true;
+        }
+        trackedFilter = Filter;
+
+        if (!capturing) return;
+        if (Filter == "sync" && isAsync) return;
+        if (Filter == "async" && !isAsync) return;
+
+        log.Add(new LogEntry(name, (int)(DateTime.Now - start).TotalMilliseconds));
     }
 
     private void Rerender()
@@ -42,7 +64,7 @@
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        Add("SetParametersAsync");
+        Add("SetParametersAsync", isAsync: true);
         await base.SetParametersAsync(parameters);
     }
 
@@ -50,7 +72,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Add("OnInitializedAsync");
+        Add("OnInitializedAsync", isAsync: true);
         await Task.Yield();
     }
 
@@ -58,7 +80,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        Add("OnParametersSetAsync");
+        Add("OnParametersSetAsync", isAsync: true);
         await Task.Yield();
     }
 
@@ -73,7 +95,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Add($"OnAfterRenderAsync (firstRender={firstRender})");
+        Add($"OnAfterRenderAsync (firstRender={firstRender})", isAsync: true);
         await Task.Yield();
         if (capturing)
         {
