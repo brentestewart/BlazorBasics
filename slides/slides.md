@@ -681,10 +681,6 @@ layout: section
       <span class="text-6xl font-bold opacity-25 tabular-nums">02</span>
       <span class="text-5xl font-semibold">Validation</span>
     </div>
-    <div class="flex items-baseline gap-8">
-      <span class="text-6xl font-bold opacity-25 tabular-nums">03</span>
-      <span class="text-5xl font-semibold">Source-gen (.NET 10)</span>
-    </div>
   </div>
 </div>
 
@@ -713,38 +709,6 @@ layout: section
 ```
 
 `OnValidSubmit` / `OnInvalidSubmit` / `OnSubmit` — pick one.
-
----
-
-# Source-gen validation (.NET 10)
-
-<div class="text-sm opacity-70 font-mono mb-1">Program.cs</div>
-
-```csharp
-builder.Services.AddValidation();
-```
-
-<div class="text-sm opacity-70 font-mono mb-1">Comparison.cs &nbsp;<span class="opacity-70">← .cs, not .razor</span></div>
-
-```csharp
-[ValidatableType]
-public class Comparison
-{
-    [Required, MinLength(5)]
-    public string Prompt { get; set; } = "";
-
-    public Submitter Submitter { get; set; } = new();   // nested — traversed
-    public List<ComparisonResponse> Responses { get; set; } = new();  // also traversed
-}
-```
-
-**Gotcha:** `[ValidatableType]` must live in a `.cs` file — the source generator doesn't see `.razor`.
-
-<!--
-This is the new .NET 10 source-generated validator. It traverses nested objects and collections — something reflection-based validation in .NET 9 wouldn't do.
-
-Trigger a nested error on stage to show traversal working.
--->
 
 ---
 layout: section
